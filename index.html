@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="E_roots Freelance Studio – Smart Systems & Engineering Solutions">
+  <title>E_roots | Smart Systems. Smarter Engineering.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    /* Reset & Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: auto;
+      padding: 2rem 0;
+    }
+
+    h2, h3 {
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+    }
+
+    h3 {
+      font-size: 1.75rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    h3::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -8px;
+      width: 60px;
+      height: 4px;
+      background: #1d4ed8;
+      border-radius: 2px;
+    }
+
+    section {
+      padding: 4rem 0;
+    }
+
+    /* Header */
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.95);
+      border-bottom: 1px solid #e5e7eb;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+      backdrop-filter: blur(8px);
+      z-index: 999;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+    }
+    
+    .nav-middle {
+      display: flex;
+      align-items: center;
+    }
+    
+    .visitor-counter {
+      background: #f1f5f9;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #1e40af;
+      border: 1px solid #e2e8f0;
+    }
+    
+    #visitorCounter {
+      font-weight: 800;
+      color: #2563eb;
+    }
+
+    .logo {
+      font-size: 1.75rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .cta-btn {
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25);
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 10px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #dbeafe, #eff6ff);
+      padding: 6rem 0;
+      text-align: center;
+      border-radius: 0 0 30% 0;
+    }
+
+    .hero h2 {
+      font-size: 3rem;
+      line-height: 1.2;
+      max-width: 800px;
+      margin: 0 auto 1.5rem;
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero p {
+      margin: 1.5rem auto;
+      font-size: 1.25rem;
+      max-width: 700px;
+      color: #475569;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      color: #fff;
+      padding: 1rem 2rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-block;
+      margin-top: 1rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 10px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Services */
+    .services {
+      background: #fff;
+    }
+
+    .services .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s, box-shadow 0.3s;
+      text-align: center;
+      font-weight: 600;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #f1f5f9;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      transition: width 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .card:hover::before {
+      width: 100%;
+      opacity: 0.05;
+    }
+
+    /* Projects */
+    .projects {
+      background: #f1f5f9;
+    }
+
+    .projects .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .project-card {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      border-left: 5px solid #1d4ed8;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .project-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .project-card strong {
+      font-size: 1.1rem;
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #1e40af;
+    }
+
+    /* Contact */
+    .contact {
+      background: #fff;
+    }
+
+    .contact form {
+      display: grid;
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+      max-width: 700px;
+    }
+
+    input, select, textarea, button {
+      font-family: inherit;
+      font-size: 1rem;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #e2e8f0;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    }
+
+    button {
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      color: white;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 1rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 10px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Testimonials */
+    .testimonials {
+      background: #f8fafc;
+      text-align: center;
+    }
+
+    .testimonials-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .testimonials blockquote {
+      font-style: italic;
+      margin: 0;
+      padding: 2rem;
+      border-radius: 1rem;
+      background: #fff;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      position: relative;
+      border-left: 5px solid #1d4ed8;
+    }
+
+    .testimonials blockquote::before {
+      content: '"';
+      font-size: 4rem;
+      line-height: 0;
+      position: absolute;
+      top: 30px;
+      left: 20px;
+      color: #e2e8f0;
+      font-family: Georgia, serif;
+    }
+
+    /* Footer */
+    footer {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: #f1f5f9;
+      padding: 3rem 0;
+      text-align: center;
+      border-radius: 30% 0 0 0;
+    }
+
+    footer a {
+      color: #60a5fa;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    footer a:hover {
+      color: #93c5fd;
+    }
+
+    footer .social {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    footer .social a {
+      font-size: 1.5rem;
+      color: #f1f5f9;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+
+    footer .social a:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-3px);
+    }
+
+    /* Animation */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate {
+      animation: fadeUp 0.6s ease forwards;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h2 {
+        font-size: 2.5rem;
+      }
+      
+      .hero {
+        padding: 4rem 0;
+        border-radius: 0 0 15% 0;
+      }
+      
+      footer {
+        border-radius: 15% 0 0 0;
+      }
+      
+      .services .grid, .projects .grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .nav {
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      
+      .nav-middle {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        margin-top: 0.5rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero h2 {
+        font-size: 2rem;
+      }
+      
+      .hero p {
+        font-size: 1.1rem;
+      }
+      
+      .nav {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      section {
+        padding: 3rem 0;
+      }
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Visitor counter implementation
+      const updateVisitorCount = () => {
+        // Get current count from localStorage or initialize to 0
+        let visitorCount = localStorage.getItem('totalVisitors') || 0;
+        
+        // Only increment count if this is a new session
+        if (!sessionStorage.getItem('counted')) {
+          visitorCount = Number(visitorCount) + 1;
+          localStorage.setItem('totalVisitors', visitorCount);
+          sessionStorage.setItem('counted', 'true');
+        }
+        
+        // Update the counter display
+        const visitorCounterElement = document.getElementById('visitorCounter');
+        if (visitorCounterElement) {
+          visitorCounterElement.textContent = visitorCount;
+        }
+      };
+      
+      // Initialize counter
+      updateVisitorCount();
+      
+      // Form submission handler
+      const form = document.querySelector('form');
+      const formSuccess = document.getElementById('form-success');
+      
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          // In a real application with formspree, we don't prevent default
+          // as we want the form to actually submit to formspree
+          // e.preventDefault();
+          
+          // Show success message (will show briefly before redirect)
+          formSuccess.style.display = 'block';
+        });
+      }
+      
+      // Add animation classes to elements as they scroll into view
+      const animateOnScroll = () => {
+        const elements = document.querySelectorAll('.card, .project-card, blockquote, form');
+        elements.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= window.innerHeight * 0.8) {
+            el.classList.add('animate');
+          }
+        });
+      };
+      
+      window.addEventListener('scroll', animateOnScroll);
+      animateOnScroll(); // Initial check
+    });
+  </script>
+</head>
+<body>
+  <header class="sticky-header">
+    <div class="container nav">
+      <div class="logo">E_roots</div>
+      <div class="nav-middle">
+        <div class="visitor-counter">
+          <span>Total Visitors: </span>
+          <span id="visitorCounter">0</span>
+        </div>
+      </div>
+      <a href="#contact" class="cta-btn">Request A Project</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h2>Smart Systems. Smarter Engineering.</h2>
+      <p>Transforming ideas into reality with cutting-edge embedded solutions, IoT development, precision PCB & antenna design, and intuitive web & app solutions.</p>
+      <a href="#contact" class="btn">Request A Project</a>
+    </div>
+  </section>
+
+  <section class="services">
+    <div class="container">
+      <h3>Our Services</h3>
+      <div class="grid">
+        <div class="card">Embedded Systems</div>
+        <div class="card">IoT Solutions</div>
+        <div class="card">PCB Design</div>
+        <div class="card">Antenna Design & Simulation</div>
+        <div class="card">Web & App Development</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="projects">
+    <div class="container">
+      <h3>Projects</h3>
+      <div class="grid">
+        <div class="project-card">
+          <strong>Home Automation System</strong>
+          ESP8266 + Arduino IoT Cloud; gas detection & blast protection; comprehensive safety monitoring with real-time alerts
+        </div>
+        <div class="project-card">
+          <strong>Live Bus Tracking System</strong>
+          ESP32 + GPS + Firebase; real-time updates with user-friendly interface; future geofencing & route optimization capabilities
+        </div>
+        <div class="project-card">
+          <strong>Wearable Patch Antenna</strong>
+          Innovative textile patch integrated on jeans at 2.45 GHz & 5.8 GHz; precisely simulated in Ansys HFSS for optimal performance
+        </div>
+        <div class="project-card">
+          <strong>Antenna Prototype Design</strong>
+          Comprehensive suite of Monopole, Yagi-Uda, Whip, Helix & Dipole designs; advanced RF simulation & rigorous testing protocols
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <div class="container">
+      <h3>Request a Project</h3>
+      <form action="https://formspree.io/f/mldbagao" method="POST">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <input type="tel" name="phone" placeholder="Phone Number">
+        <select name="type" required>
+          <option value="">Select Project Type</option>
+          <option>Embedded Systems</option>
+          <option>IoT Development</option>
+          <option>PCB Design</option>
+          <option>Antenna Simulation</option>
+          <option>Web/App Development</option>
+        </select>
+        <textarea name="description" placeholder="Project Description" rows="5" required></textarea>
+        <button type="submit">Submit Request</button>
+        <p id="form-success" style="display:none; color:#16a34a; padding: 1rem; background: #dcfce7; border-radius: 0.5rem; margin-top: 1rem;">Thanks! We'll be in touch soon about your project.</p>
+      </form>
+    </div>
+  </section>
+
+  <section class="testimonials">
+    <div class="container">
+      <h3>What Clients Say</h3>
+      <div class="testimonials-container">
+        <blockquote>"Exceptional design and robust embedded solutions! E_roots delivered exactly what we needed and exceeded our expectations."</blockquote>
+        <blockquote>"They transformed our idea into a functional IoT product within our timeline and budget. The attention to detail was impressive."</blockquote>
+        <blockquote>"E_roots is our go-to for RF and app integration projects. Their technical expertise and problem-solving abilities are unmatched."</blockquote>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>📍 Dhankawadi, Pune | 📞 <a href="tel:+917350059825">7350059825</a> | 📧 <a href="mailto:eroots2025@gmail.com">eroots2025@gmail.com</a></p>
+      <div class="social">
+        <a href="https://www.linkedin.com/in/eroots" aria-label="LinkedIn" target="_blank" rel="noopener">🔗</a>
+        <a href="https://github.com/eroots" aria-label="GitHub" target="_blank" rel="noopener">💻</a>
+        <a href="https://wa.me/917350059825" aria-label="WhatsApp" target="_blank" rel="noopener">💬</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
