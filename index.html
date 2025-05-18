@@ -78,26 +78,6 @@
       align-items: center;
       padding: 1rem 0;
     }
-    
-    .nav-middle {
-      display: flex;
-      align-items: center;
-    }
-    
-    .visitor-counter {
-      background: #f1f5f9;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: #1e40af;
-      border: 1px solid #e2e8f0;
-    }
-    
-    #visitorCounter {
-      font-weight: 800;
-      color: #2563eb;
-    }
 
     .logo {
       font-size: 1.75rem;
@@ -350,32 +330,76 @@
       color: #93c5fd;
     }
 
-    footer .social {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-top: 1.5rem;
-    }
-
-    footer .social a {
-      font-size: 1.5rem;
-      color: #f1f5f9;
-      width: 40px;
-      height: 40px;
+    /* Floating WhatsApp Button */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #25D366;
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
       transition: all 0.3s;
+      z-index: 1000;
+      animation: pulse 2s infinite;
     }
 
-    footer .social a:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-3px);
+    .whatsapp-float:hover {
+      transform: translateY(-3px) scale(1.1);
+      box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4);
     }
 
-    /* Animation */
+    .whatsapp-float svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    /* Animated Visitor Counter */
+    .visitor-counter {
+      position: fixed;
+      bottom: 2rem;
+      left: 2rem;
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+      animation: slideIn 1s ease-out;
+      z-index: 1000;
+      font-size: 0.9rem;
+    }
+
+    .visitor-counter svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
     @keyframes fadeUp {
       from {
         opacity: 0;
@@ -389,6 +413,10 @@
 
     .animate {
       animation: fadeUp 0.6s ease forwards;
+    }
+
+    .pulse {
+      animation: pulse 0.5s ease;
     }
 
     /* Responsive */
@@ -415,11 +443,9 @@
         gap: 1rem;
       }
       
-      .nav-middle {
-        order: 3;
-        width: 100%;
-        justify-content: center;
-        margin-top: 0.5rem;
+      .visitor-counter {
+        bottom: 6rem;
+        left: 1rem;
       }
     }
 
@@ -440,48 +466,60 @@
       section {
         padding: 3rem 0;
       }
+      
+      .whatsapp-float {
+        bottom: 1rem;
+        right: 1rem;
+        width: 50px;
+        height: 50px;
+      }
+      
+      .visitor-counter {
+        bottom: 5rem;
+        padding: 0.75rem 1rem;
+        font-size: 0.8rem;
+      }
     }
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Visitor counter implementation
+      // Visitor counter with animation
       const updateVisitorCount = () => {
-        // Get current count from localStorage or initialize to 0
         let visitorCount = localStorage.getItem('totalVisitors') || 0;
         
-        // Only increment count if this is a new session
         if (!sessionStorage.getItem('counted')) {
           visitorCount = Number(visitorCount) + 1;
           localStorage.setItem('totalVisitors', visitorCount);
           sessionStorage.setItem('counted', 'true');
+          
+          const counterElement = document.getElementById('visitorCounter');
+          if (counterElement) {
+            counterElement.parentElement.classList.add('pulse');
+            setTimeout(() => {
+              counterElement.parentElement.classList.remove('pulse');
+            }, 1000);
+          }
         }
         
-        // Update the counter display
         const visitorCounterElement = document.getElementById('visitorCounter');
         if (visitorCounterElement) {
           visitorCounterElement.textContent = visitorCount;
         }
       };
-      
-      // Initialize counter
+
       updateVisitorCount();
-      
+
       // Form submission handler
       const form = document.querySelector('form');
       const formSuccess = document.getElementById('form-success');
       
       if (form) {
         form.addEventListener('submit', (e) => {
-          // In a real application with formspree, we don't prevent default
-          // as we want the form to actually submit to formspree
-          // e.preventDefault();
-          
-          // Show success message (will show briefly before redirect)
           formSuccess.style.display = 'block';
         });
       }
       
-      // Add animation classes to elements as they scroll into view
+      // Scroll animations
       const animateOnScroll = () => {
         const elements = document.querySelectorAll('.card, .project-card, blockquote, form');
         elements.forEach(el => {
@@ -493,7 +531,7 @@
       };
       
       window.addEventListener('scroll', animateOnScroll);
-      animateOnScroll(); // Initial check
+      animateOnScroll();
     });
   </script>
 </head>
@@ -501,19 +539,13 @@
   <header class="sticky-header">
     <div class="container nav">
       <div class="logo">E_roots</div>
-      <div class="nav-middle">
-        <div class="visitor-counter">
-          <span>Total Visitors: </span>
-          <span id="visitorCounter">0</span>
-        </div>
-      </div>
       <a href="#contact" class="cta-btn">Request A Project</a>
     </div>
   </header>
 
   <section class="hero">
     <div class="container">
-      <h2>Smart Systems. Smarter Engineering.</h2>
+      <h2>Smart Systems | Smarter Engineering</h2>
       <p>Transforming ideas into reality with cutting-edge embedded solutions, IoT development, precision PCB & antenna design, and intuitive web & app solutions.</p>
       <a href="#contact" class="btn">Request A Project</a>
     </div>
@@ -591,13 +623,25 @@
 
   <footer>
     <div class="container">
-      <p>📍 Dhankawadi, Pune | 📞 <a href="tel:+917350059825">7350059825</a> | 📧 <a href="mailto:eroots2025@gmail.com">eroots2025@gmail.com</a></p>
-      <div class="social">
-        <!-- <a href="https://www.linkedin.com/in/eroots" aria-label="LinkedIn" target="_blank" rel="noopener">🔗</a>
-        <a href="https://github.com/eroots" aria-label="GitHub" target="_blank" rel="noopener">💻</a> -->
-        <a href="https://wa.me/917350059825" aria-label="WhatsApp" target="_blank" rel="noopener">💬</a>
-      </div>
+      <p>📍 Pune | 📞 <a href="tel:+917350059825">+91 7350059825</a> | 📧 <a href="mailto:eroots2025@gmail.com">eroots2025@gmail.com</a></p>
     </div>
   </footer>
+
+  <!-- Floating Elements -->
+  <a href="https://wa.me/917350059825" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zm-7.01 15.24c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.13-1.05-.39-1.99-1.23-.74-.66-1.23-1.5-1.38-1.72-.14-.23-.02-.36.11-.47.11-.11.27-.14.37-.11.1.02.21.05.31.18.1.14.14.23.24.34.09.11.19.14.29.09.1-.05.6-.49.76-.67.2-.18.4-.31.54-.41.14-.09.19-.1.31-.04.12.06.75.57.89.67.14.1.27.15.39.05.12-.1.06-.22.02-.3-.05-.08-.46-1.1-.64-1.51-.18-.4-.36-.34-.46-.34-.12-.01-.25-.01-.36-.01-.1 0-.27.02-.42.11-.15.09-.27.22-.37.37-.14.21-.27.56-.27.56-.05.1-.1.13-.2.09-.1-.03-.42-.17-.8-.26-.38-.1-.65-.15-.63-.33.02-.08.05-.12.07-.18.06-.08.1-.17.15-.25.18-.31.24-.53.24-.53s-.12-.03-.33-.03a.64.64 0 0 0-.45.22c-.14.15-.55.53-.55 1.29s.57 1.5.65 1.61c.08.1 1.25 1.92 3.08 2.72 2.04.89 2.06.59 2.43.56.37-.03 1.22-.5 1.39-1.13.18-.62.18-1.16.13-1.26-.05-.1-.18-.07-.38-.17z"/>
+    </svg>
+  </a>
+
+  <div class="visitor-counter">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+      <circle cx="9" cy="7" r="4"></circle>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+    </svg>
+    <span id="visitorCounter">0</span> visitors
+  </div>
 </body>
 </html>
