@@ -1,647 +1,393 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="E_roots Freelance Studio – Smart Systems & Engineering Solutions">
-  <title>E_roots | Smart Systems. Smarter Engineering.</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <style>
-    /* Reset & Base Styles */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      font-size: 16px;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #f8fafc;
-      color: #1e293b;
-      line-height: 1.6;
-    }
-
-    .container {
-      width: 90%;
-      max-width: 1200px;
-      margin: auto;
-      padding: 2rem 0;
-    }
-
-    h2, h3 {
-      font-weight: 800;
-      margin-bottom: 1.5rem;
-    }
-
-    h3 {
-      font-size: 1.75rem;
-      position: relative;
-      display: inline-block;
-    }
-
-    h3::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: -8px;
-      width: 60px;
-      height: 4px;
-      background: #1d4ed8;
-      border-radius: 2px;
-    }
-
-    section {
-      padding: 4rem 0;
-    }
-
-    /* Header */
-    .sticky-header {
-      position: sticky;
-      top: 0;
-      background: rgba(255, 255, 255, 0.95);
-      border-bottom: 1px solid #e5e7eb;
-      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
-      backdrop-filter: blur(8px);
-      z-index: 999;
-    }
-
-    .nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 0;
-    }
-
-    .logo {
-      font-size: 1.75rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #1e40af, #3b82f6);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      letter-spacing: -0.5px;
-    }
-
-    .cta-btn {
-      background: linear-gradient(135deg, #1e40af, #3b82f6);
-      color: #fff;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.5rem;
-      text-decoration: none;
-      font-weight: 600;
-      transition: transform 0.3s, box-shadow 0.3s;
-      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25);
-    }
-
-    .cta-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 10px rgba(59, 130, 246, 0.3);
-    }
-
-    /* Hero */
-    .hero {
-      background: linear-gradient(135deg, #dbeafe, #eff6ff);
-      padding: 6rem 0;
-      text-align: center;
-      border-radius: 0 0 30% 0;
-    }
-
-    .hero h2 {
-      font-size: 3rem;
-      line-height: 1.2;
-      max-width: 800px;
-      margin: 0 auto 1.5rem;
-      background: linear-gradient(135deg, #1e40af, #3b82f6);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .hero p {
-      margin: 1.5rem auto;
-      font-size: 1.25rem;
-      max-width: 700px;
-      color: #475569;
-    }
-
-    .btn {
-      background: linear-gradient(135deg, #1e40af, #3b82f6);
-      color: #fff;
-      padding: 1rem 2rem;
-      border-radius: 0.5rem;
-      text-decoration: none;
-      font-weight: 600;
-      display: inline-block;
-      margin-top: 1rem;
-      transition: transform 0.3s, box-shadow 0.3s;
-      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25);
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 10px rgba(59, 130, 246, 0.3);
-    }
-
-    /* Services */
-    .services {
-      background: #fff;
-    }
-
-    .services .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      margin-top: 3rem;
-    }
-
-    .card {
-      background: #ffffff;
-      padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-      transition: transform 0.3s, box-shadow 0.3s;
-      text-align: center;
-      font-weight: 600;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 200px;
-      position: relative;
-      overflow: hidden;
-      border: 1px solid #f1f5f9;
-    }
-
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 5px;
-      height: 100%;
-      background: linear-gradient(135deg, #1e40af, #3b82f6);
-      transition: width 0.3s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .card:hover::before {
-      width: 100%;
-      opacity: 0.05;
-    }
-
-    /* Projects */
-    .projects {
-      background: #f1f5f9;
-    }
-
-    .projects .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      margin-top: 3rem;
-    }
-
-    .project-card {
-      background: #fff;
-      padding: 1.5rem;
-      border-radius: 1rem;
-      border-left: 5px solid #1d4ed8;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .project-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    }
-
-    .project-card strong {
-      font-size: 1.1rem;
-      display: block;
-      margin-bottom: 0.5rem;
-      color: #1e40af;
-    }
-
-    /* Contact */
-    .contact {
-      background: #fff;
-    }
-
-    .contact form {
-      display: grid;
-      gap: 1.25rem;
-      margin-top: 2.5rem;
-      max-width: 700px;
-    }
-
-    input, select, textarea, button {
-      font-family: inherit;
-      font-size: 1rem;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid #e2e8f0;
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #60a5fa;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-    }
-
-    button {
-      background: linear-gradient(135deg, #1e40af, #3b82f6);
-      color: white;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-      padding: 1rem;
-      transition: transform 0.3s, box-shadow 0.3s;
-      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25);
-    }
-
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 10px rgba(59, 130, 246, 0.3);
-    }
-
-    /* Testimonials */
-    .testimonials {
-      background: #f8fafc;
-      text-align: center;
-    }
-
-    .testimonials-container {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      margin-top: 3rem;
-    }
-
-    .testimonials blockquote {
-      font-style: italic;
-      margin: 0;
-      padding: 2rem;
-      border-radius: 1rem;
-      background: #fff;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-      position: relative;
-      border-left: 5px solid #1d4ed8;
-    }
-
-    .testimonials blockquote::before {
-      content: '"';
-      font-size: 4rem;
-      line-height: 0;
-      position: absolute;
-      top: 30px;
-      left: 20px;
-      color: #e2e8f0;
-      font-family: Georgia, serif;
-    }
-
-    /* Footer */
-    footer {
-      background: linear-gradient(135deg, #1e293b, #0f172a);
-      color: #f1f5f9;
-      padding: 3rem 0;
-      text-align: center;
-      border-radius: 30% 0 0 0;
-    }
-
-    footer a {
-      color: #60a5fa;
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-
-    footer a:hover {
-      color: #93c5fd;
-    }
-
-    /* Floating WhatsApp Button */
-    .whatsapp-float {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      background: #25D366;
-      color: white;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
-      transition: all 0.3s;
-      z-index: 1000;
-      animation: pulse 2s infinite;
-    }
-
-    .whatsapp-float:hover {
-      transform: translateY(-3px) scale(1.1);
-      box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4);
-    }
-
-    .whatsapp-float svg {
-      width: 32px;
-      height: 32px;
-    }
-
-    /* Animated Visitor Counter */
-    .visitor-counter {
-      position: fixed;
-      bottom: 2rem;
-      left: 2rem;
-      background: linear-gradient(135deg, #1e40af, #3b82f6);
-      color: white;
-      padding: 1rem 1.5rem;
-      border-radius: 2rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
-      animation: slideIn 1s ease-out;
-      z-index: 1000;
-      font-size: 0.9rem;
-    }
-
-    .visitor-counter svg {
-      width: 20px;
-      height: 20px;
-    }
-
-    /* Animations */
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-
-    @keyframes slideIn {
-      from {
-        transform: translateX(-100%);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .animate {
-      animation: fadeUp 0.6s ease forwards;
-    }
-
-    .pulse {
-      animation: pulse 0.5s ease;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .hero h2 {
-        font-size: 2.5rem;
-      }
-      
-      .hero {
-        padding: 4rem 0;
-        border-radius: 0 0 15% 0;
-      }
-      
-      footer {
-        border-radius: 15% 0 0 0;
-      }
-      
-      .services .grid, .projects .grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .nav {
-        flex-wrap: wrap;
-        gap: 1rem;
-      }
-      
-      .visitor-counter {
-        bottom: 6rem;
-        left: 1rem;
-      }
-    }
-
-    @media (max-width: 600px) {
-      .hero h2 {
-        font-size: 2rem;
-      }
-      
-      .hero p {
-        font-size: 1.1rem;
-      }
-      
-      .nav {
-        flex-direction: column;
-        gap: 1rem;
-      }
-      
-      section {
-        padding: 3rem 0;
-      }
-      
-      .whatsapp-float {
-        bottom: 1rem;
-        right: 1rem;
-        width: 50px;
-        height: 50px;
-      }
-      
-      .visitor-counter {
-        bottom: 5rem;
-        padding: 0.75rem 1rem;
-        font-size: 0.8rem;
-      }
-    }
-  </style>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Visitor counter with animation
-      const updateVisitorCount = () => {
-        let visitorCount = localStorage.getItem('totalVisitors') || 0;
-        
-        if (!sessionStorage.getItem('counted')) {
-          visitorCount = Number(visitorCount) + 1;
-          localStorage.setItem('totalVisitors', visitorCount);
-          sessionStorage.setItem('counted', 'true');
-          
-          const counterElement = document.getElementById('visitorCounter');
-          if (counterElement) {
-            counterElement.parentElement.classList.add('pulse');
-            setTimeout(() => {
-              counterElement.parentElement.classList.remove('pulse');
-            }, 1000);
-          }
-        }
-        
-        const visitorCounterElement = document.getElementById('visitorCounter');
-        if (visitorCounterElement) {
-          visitorCounterElement.textContent = visitorCount;
-        }
-      };
-
-      updateVisitorCount();
-
-      // Form submission handler
-      const form = document.querySelector('form');
-      const formSuccess = document.getElementById('form-success');
-      
-      if (form) {
-        form.addEventListener('submit', (e) => {
-          formSuccess.style.display = 'block';
-        });
-      }
-      
-      // Scroll animations
-      const animateOnScroll = () => {
-        const elements = document.querySelectorAll('.card, .project-card, blockquote, form');
-        elements.forEach(el => {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= window.innerHeight * 0.8) {
-            el.classList.add('animate');
-          }
-        });
-      };
-      
-      window.addEventListener('scroll', animateOnScroll);
-      animateOnScroll();
-    });
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="E_roots - Smart Systems & Engineering Solutions with Electronic Components Store">
+    <title>E_roots | Smart Systems. Smarter Engineering.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="sticky-header">
-    <div class="container nav">
-      <div class="logo">E_roots</div>
-      <a href="#contact" class="cta-btn">Request A Project</a>
-    </div>
-  </header>
-
-  <section class="hero">
-    <div class="container">
-      <h2>Smart Systems | Smarter Engineering</h2>
-      <p>Transforming ideas into reality with cutting-edge embedded solutions, IoT development, precision PCB & antenna design, and intuitive web & app solutions.</p>
-      <a href="#contact" class="btn">Request A Project</a>
-    </div>
-  </section>
-
-  <section class="services">
-    <div class="container">
-      <h3>Our Services</h3>
-      <div class="grid">
-        <div class="card">Embedded Systems</div>
-        <div class="card">IoT Solutions</div>
-        <div class="card">PCB Design</div>
-        <div class="card">Antenna Design & Simulation</div>
-        <div class="card">Web & App Development</div>
-      </div>
-    </div>
-  </section>
-
-  <section class="projects">
-    <div class="container">
-      <h3>Projects</h3>
-      <div class="grid">
-        <div class="project-card">
-          <strong>Home Automation System</strong>
-          ESP8266 + Arduino IoT Cloud; gas detection & blast protection; comprehensive safety monitoring with real-time alerts
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>E_roots</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#services" class="nav-link">Services</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#projects" class="nav-link">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#products" class="nav-link buy-link">Buy</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#cart" class="nav-link cart-link">
+                        Cart (<span id="cart-count">0</span>)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#contact" class="nav-link">Contact</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
         </div>
-        <div class="project-card">
-          <strong>Live Bus Tracking System</strong>
-          ESP32 + GPS + Firebase; real-time updates with user-friendly interface; future geofencing & route optimization capabilities
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Smart Systems | Smarter Engineering</h1>
+            <p>Transforming ideas into reality with cutting-edge embedded solutions, IoT development, precision PCB & antenna design, and intuitive web & app solutions.</p>
+            <div class="visitor-counter">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+                <span>Visitors: <span id="visitor-count">0</span></span>
+            </div>
+            <a href="#products" class="cta-button">Shop Components</a>
         </div>
-        <div class="project-card">
-          <strong>Wearable Patch Antenna</strong>
-          Innovative textile patch integrated on jeans at 2.45 GHz & 5.8 GHz; precisely simulated in Ansys HFSS for optimal performance
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <h3>Our Services</h3>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🔧</div>
+                    <h4>Embedded Systems</h4>
+                    <p>Custom embedded solutions for your projects</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🌐</div>
+                    <h4>IoT Solutions</h4>
+                    <p>Connected devices and smart systems</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">⚡</div>
+                    <h4>PCB Design</h4>
+                    <p>Professional circuit board design</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📡</div>
+                    <h4>Antenna Design & Simulation</h4>
+                    <p>RF design and optimization</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">💻</div>
+                    <h4>Web & App Development</h4>
+                    <p>Modern web and mobile applications</p>
+                </div>
+            </div>
         </div>
-        <div class="project-card">
-          <strong>Antenna Prototype Design</strong>
-          Comprehensive suite of Monopole, Yagi-Uda, Whip, Helix & Dipole designs; advanced RF simulation & rigorous testing protocols
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="container">
+            <h3>Featured Projects</h3>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <strong>Home Automation System</strong>
+                    <p>ESP8266 + Arduino IoT Cloud; gas detection & blast protection; comprehensive safety monitoring with real-time alerts</p>
+                </div>
+                <div class="project-card">
+                    <strong>Live Bus Tracking System</strong>
+                    <p>ESP32 + GPS + Firebase; real-time updates with user-friendly interface; future geofencing & route optimization capabilities</p>
+                </div>
+                <div class="project-card">
+                    <strong>Wearable Patch Antenna</strong>
+                    <p>Innovative textile patch integrated on jeans at 2.45 GHz & 5.8 GHz; precisely simulated in Ansys HFSS for optimal performance</p>
+                </div>
+                <div class="project-card">
+                    <strong>Antenna Prototype Design</strong>
+                    <p>Comprehensive suite of Monopole, Yagi-Uda, Whip, Helix & Dipole designs; advanced RF simulation & rigorous testing protocols</p>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="contact" class="contact">
-    <div class="container">
-      <h3>Request a Project</h3>
-      <form action="https://formspree.io/f/mldbagao" method="POST">
-        <input type="text" name="name" placeholder="Your Name" required>
-        <input type="email" name="email" placeholder="Your Email" required>
-        <input type="tel" name="phone" placeholder="Phone Number">
-        <select name="type" required>
-          <option value="">Select Project Type</option>
-          <option>Embedded Systems</option>
-          <option>IoT Development</option>
-          <option>PCB Design</option>
-          <option>Antenna Simulation</option>
-          <option>Web/App Development</option>
-        </select>
-        <textarea name="description" placeholder="Project Description" rows="5" required></textarea>
-        <button type="submit">Submit Request</button>
-        <p id="form-success" style="display:none; color:#16a34a; padding: 1rem; background: #dcfce7; border-radius: 0.5rem; margin-top: 1rem;">Thanks! We'll be in touch soon about your project.</p>
-      </form>
-    </div>
-  </section>
+    <!-- Products Section -->
+    <section id="products" class="products-section">
+        <div class="container">
+            <h2>Electronic Components Store</h2>
+            <div class="product-categories">
+                
+                <!-- Transformers Category -->
+                <div class="category">
+                    <h3>🔌 Transformers</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="transformer-12v">
+                            <div class="product-image">
+                                <img src="images/transformer-12v.jpg" alt="12-0-12V Transformer" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>12-0-12V Transformer</h4>
+                                <p>1A / 500mA Step-down transformer</p>
+                                <div class="price">₹299</div>
+                                <button class="add-to-cart" data-name="12-0-12V Transformer" data-price="299">Add to Cart</button>
+                            </div>
+                        </div>
+                        
+                        <div class="product-card" data-product="transformer-9v">
+                            <div class="product-image">
+                                <img src="images/transformer-12v.jpg" alt="9-0-9V Transformer" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>9-0-9V Transformer</h4>
+                                <p>500mA Step-down transformer</p>
+                                <div class="price">₹249</div>
+                                <button class="add-to-cart" data-name="9-0-9V Transformer" data-price="249">Add to Cart</button>
+                            </div>
+                        </div>
+                        
+                        <div class="product-card" data-product="transformer-6v">
+                            <div class="product-image">
+                                <img src="images/transformer-12v.jpg" alt="6-0-6V Transformer" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>6-0-6V Transformer</h4>
+                                <p>1A / 500mA Step-down transformer</p>
+                                <div class="price">₹199</div>
+                                <button class="add-to-cart" data-name="6-0-6V Transformer" data-price="199">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-  <section class="testimonials">
-    <div class="container">
-      <h3>What Clients Say</h3>
-      <div class="testimonials-container">
-        <blockquote>"Exceptional design and robust embedded solutions! E_roots delivered exactly what we needed and exceeded our expectations."</blockquote>
-        <blockquote>"They transformed our idea into a functional IoT product within our timeline and budget. The attention to detail was impressive."</blockquote>
-        <blockquote>"E_roots is our go-to for RF and app integration projects. Their technical expertise and problem-solving abilities are unmatched."</blockquote>
-      </div>
-    </div>
-  </section>
+                <!-- Sensor Modules Category -->
+                <div class="category">
+                    <h3>📟 Sensor Modules</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="zmpt101b">
+                            <div class="product-image">
+                                <img src="images/zmpt101b.jpg" alt="ZMPT101B AC Voltage Sensor" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>ZMPT101B AC Voltage Sensor</h4>
+                                <p>Measures AC voltage accurately</p>
+                                <div class="price">₹149</div>
+                                <button class="add-to-cart" data-name="ZMPT101B AC Voltage Sensor" data-price="149">Add to Cart</button>
+                            </div>
+                        </div>
+                        
+                        <div class="product-card" data-product="ky002">
+                            <div class="product-image">
+                                <img src="images/ky002.jpg" alt="KY002 Shock Module" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>KY002 Shock Module</h4>
+                                <p>Detects vibrations and shocks</p>
+                                <div class="price">₹89</div>
+                                <button class="add-to-cart" data-name="KY002 Shock Module" data-price="89">Add to Cart</button>
+                            </div>
+                        </div>
+                        
+                        <div class="product-card" data-product="max4466">
+                            <div class="product-image">
+                                <img src="images/max4466.jpg" alt="MAX4466 Microphone Module" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>MAX4466 Microphone Module</h4>
+                                <p>Sound detection with gain control</p>
+                                <div class="price">₹129</div>
+                                <button class="add-to-cart" data-name="MAX4466 Microphone Module" data-price="129">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-  <footer>
-    <div class="container">
-      <p>📍 Pune | 📞 <a href="tel:+917350059825">+91 7350059825</a> | 📧 <a href="mailto:eroots2025@gmail.com">eroots2025@gmail.com</a></p>
-    </div>
-  </footer>
+                <!-- Amplifier Module Category -->
+                <div class="category">
+                    <h3>🔊 Amplifier Module</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="tpa3116d2">
+                            <div class="product-image">
+                                <img src="images/tpa3116d2.jpg" alt="TPA3116D2 Audio Amplifier" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>TPA3116D2 Audio Amplifier</h4>
+                                <p>High-power audio amplifier board</p>
+                                <div class="price">₹399</div>
+                                <button class="add-to-cart" data-name="TPA3116D2 Audio Amplifier" data-price="399">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-  <!-- Floating Elements -->
-  <a href="https://wa.me/917350059825" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zm-7.01 15.24c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.13-1.05-.39-1.99-1.23-.74-.66-1.23-1.5-1.38-1.72-.14-.23-.02-.36.11-.47.11-.11.27-.14.37-.11.1.02.21.05.31.18.1.14.14.23.24.34.09.11.19.14.29.09.1-.05.6-.49.76-.67.2-.18.4-.31.54-.41.14-.09.19-.1.31-.04.12.06.75.57.89.67.14.1.27.15.39.05.12-.1.06-.22.02-.3-.05-.08-.46-1.1-.64-1.51-.18-.4-.36-.34-.46-.34-.12-.01-.25-.01-.36-.01-.1 0-.27.02-.42.11-.15.09-.27.22-.37.37-.14.21-.27.56-.27.56-.05.1-.1.13-.2.09-.1-.03-.42-.17-.8-.26-.38-.1-.65-.15-.63-.33.02-.08.05-.12.07-.18.06-.08.1-.17.15-.25.18-.31.24-.53.24-.53s-.12-.03-.33-.03a.64.64 0 0 0-.45.22c-.14.15-.55.53-.55 1.29s.57 1.5.65 1.61c.08.1 1.25 1.92 3.08 2.72 2.04.89 2.06.59 2.43.56.37-.03 1.22-.5 1.39-1.13.18-.62.18-1.16.13-1.26-.05-.1-.18-.07-.38-.17z"/>
-    </svg>
-  </a>
+                <!-- Voltage Converters Category -->
+                <div class="category">
+                    <h3>🔋 Voltage Converters</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="xl7015">
+                            <div class="product-image">
+                                <img src="images/xl7015.jpg" alt="XL7015 DC-DC Converter" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>XL7015 DC-DC Converter</h4>
+                                <p>Buck converter (step-down)</p>
+                                <div class="price">₹179</div>
+                                <button class="add-to-cart" data-name="XL7015 DC-DC Converter" data-price="179">Add to Cart</button>
+                            </div>
+                        </div>
+                        
+                        <div class="product-card" data-product="xl4016e1">
+                            <div class="product-image">
+                                <img src="images/xl7015.jpg" alt="XL4016E1 Power Supply" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>XL4016E1 Power Supply</h4>
+                                <p>200W step-down power module</p>
+                                <div class="price">₹299</div>
+                                <button class="add-to-cart" data-name="XL4016E1 Power Supply" data-price="299">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-  <div class="visitor-counter">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-      <circle cx="9" cy="7" r="4"></circle>
-      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-    </svg>
-    <span id="visitorCounter">0</span> visitors
-  </div>
+                <!-- Relay Modules Category -->
+                <div class="category">
+                    <h3>⚙️ Relay Modules</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="relay-1ch">
+                            <div class="product-image">
+                                <img src="images/zmpt101b.jpg" alt="Single Channel Relay" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>Single Channel Relay</h4>
+                                <p>5V relay module with optocoupler</p>
+                                <div class="price">₹79</div>
+                                <button class="add-to-cart" data-name="Single Channel Relay" data-price="79">Add to Cart</button>
+                            </div>
+                        </div>
+                        
+                        <div class="product-card" data-product="relay-2ch">
+                            <div class="product-image">
+                                <img src="images/zmpt101b.jpg" alt="2-Channel Relay Module" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>2-Channel Relay Module</h4>
+                                <p>Dual relay with isolation</p>
+                                <div class="price">₹149</div>
+                                <button class="add-to-cart" data-name="2-Channel Relay Module" data-price="149">Add to Cart</button>
+                            </div>
+                        </div>
+                        
+                        <div class="product-card" data-product="relay-4ch">
+                            <div class="product-image">
+                                <img src="images/zmpt101b.jpg" alt="4-Channel Relay Module" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>4-Channel Relay Module</h4>
+                                <p>Quad relay with optocoupler</p>
+                                <div class="price">₹249</div>
+                                <button class="add-to-cart" data-name="4-Channel Relay Module" data-price="249">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Motor Driver Category -->
+                <div class="category">
+                    <h3>🌀 Motor Driver</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="uln2003">
+                            <div class="product-image">
+                                <img src="images/tpa3116d2.jpg" alt="ULN2003 Motor Driver" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>ULN2003 Motor Driver</h4>
+                                <p>Stepper motor driver board</p>
+                                <div class="price">₹99</div>
+                                <button class="add-to-cart" data-name="ULN2003 Motor Driver" data-price="99">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Section -->
+    <section id="cart" class="cart-section">
+        <div class="container">
+            <h2>Shopping Cart</h2>
+            <div id="cart-items" class="cart-items">
+                <p class="empty-cart">Your cart is empty</p>
+            </div>
+            <div class="cart-total">
+                <h3>Total: ₹<span id="cart-total">0</span></h3>
+                <button id="checkout-btn" class="checkout-btn" disabled>Checkout</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h3>Request a Project</h3>
+            <form action="https://formspree.io/f/mldbagao" method="POST">
+                <input type="text" name="name" placeholder="Your Name" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <input type="tel" name="phone" placeholder="Phone Number">
+                <select name="type" required>
+                    <option value="">Select Project Type</option>
+                    <option>Embedded Systems</option>
+                    <option>IoT Development</option>
+                    <option>PCB Design</option>
+                    <option>Antenna Simulation</option>
+                    <option>Web/App Development</option>
+                    <option>Electronic Components</option>
+                </select>
+                <textarea name="description" placeholder="Project Description" rows="5" required></textarea>
+                <button type="submit">Submit Request</button>
+                <p id="form-success" style="display:none; color:#16a34a; padding: 1rem; background: #dcfce7; border-radius: 0.5rem; margin-top: 1rem;">Thanks! We'll be in touch soon about your project.</p>
+            </form>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <h3>What Clients Say</h3>
+            <div class="testimonials-container">
+                <blockquote>"Exceptional design and robust embedded solutions! E_roots delivered exactly what we needed and exceeded our expectations."</blockquote>
+                <blockquote>"They transformed our idea into a functional IoT product within our timeline and budget. The attention to detail was impressive."</blockquote>
+                <blockquote>"E_roots is our go-to for RF and app integration projects. Their technical expertise and problem-solving abilities are unmatched."</blockquote>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>📍 Pune | 📞 <a href="tel:+917350059825">+91 7350059825</a> | 📧 <a href="mailto:info@e-roots.com">info@e-roots.com</a></p>
+            <p>&copy; 2024 E_roots. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/917350059825" class="whatsapp-float" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+        </svg>
+    </a>
+
+    <script src="scripts.js"></script>
 </body>
 </html>
+
