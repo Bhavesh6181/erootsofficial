@@ -346,53 +346,6 @@ section {
     line-height: 1.6;
 }
 
-/* Store Section */
-.store-section {
-    padding: 80px 0;
-    background: #e0f2fe; /* Light blue background to distinguish */
-    text-align: center;
-}
-
-.store-section h2 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    color: #1e293b;
-    font-weight: 700;
-}
-
-.store-intro {
-    font-size: 1.1rem;
-    color: #475569;
-    max-width: 800px;
-    margin: 0 auto 3rem auto;
-}
-
-.store-categories {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 3rem;
-}
-
-.store-category-link {
-    background: #fff;
-    color: #1e40af;
-    text-decoration: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 25px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: 1px solid #93c5fd;
-}
-
-.store-category-link:hover {
-    background: #1e40af;
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(30, 64, 175, 0.2);
-}
-
 /* Products Section */
 .products-section {
     padding: 80px 0;
@@ -498,14 +451,6 @@ section {
     margin-bottom: 1rem;
 }
 
-.original-price {
-    font-size: 1rem;
-    font-weight: 400;
-    color: #94a3b8;
-    text-decoration: line-through;
-    margin-left: 0.5rem;
-}
-
 .add-to-cart {
     background: linear-gradient(135deg, #1e40af, #3b82f6);
     color: white;
@@ -598,30 +543,20 @@ section {
 }
 
 .quantity-btn {
-    background: linear-gradient(135deg, #1e40af, #3b82f6);
+    background: #1e40af;
     color: white;
     border: none;
-    width: 35px;
-    height: 35px;
-    border-radius: 8px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
     cursor: pointer;
     font-weight: bold;
-    font-size: 1.2rem;
     transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(30, 64, 175, 0.2);
 }
 
 .quantity-btn:hover {
-    background: linear-gradient(135deg, #1d4ed8, #2563eb);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(30, 64, 175, 0.3);
-}
-
-.quantity-btn:active {
-    transform: translateY(0);
+    background: #1d4ed8;
+    transform: scale(1.1);
 }
 
 .quantity {
@@ -1057,3 +992,4 @@ html {
     margin: 1rem 0;
     text-align: center;
 }
+

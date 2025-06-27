@@ -28,10 +28,13 @@
                     <a href="#projects" class="nav-link">Projects</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#products" class="nav-link buy-link">Buy</a>
+                    <a href="store.html" class="nav-link">Stores</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#cart" class="nav-link cart-link">
+                    <a href="store.html#products" class="nav-link buy-link">Buy</a>
+                </li>
+                <li class="nav-item">
+                    <a href="store.html#cart" class="nav-link cart-link">
                         Cart (<span id="cart-count">0</span>)
                     </a>
                 </li>
@@ -58,7 +61,7 @@
                 </svg>
                 <span>Visitors: <span id="visitor-count">0</span></span>
             </div>
-            <a href="#products" class="cta-button">Shop Components</a>
+            <a href="store.html" class="cta-button">Shop Components</a>
         </div>
     </section>
 
@@ -121,221 +124,6 @@
         </div>
     </section>
 
-    <!-- Products Section -->
-    <section id="products" class="products-section">
-        <div class="container">
-            <h2>Electronic Components Store</h2>
-            <div class="product-categories">
-                
-                <!-- Transformers Category -->
-                <div class="category">
-                    <h3>🔌 Transformers</h3>
-                    <div class="products-grid">
-                        <div class="product-card" data-product="transformer-12v">
-                            <div class="product-image">
-                                <img src="images/transformer-12v.jpg" alt="12-0-12V Transformer" loading="lazy">
-                            </div>
-                            <div class="product-info">
-                                <h4>12-0-12V Transformer</h4>
-                                <p>1A / 500mA Step-down transformer</p>
-                                <div class="price">₹299</div>
-                                <button class="add-to-cart" data-name="12-0-12V Transformer" data-price="299">Add to Cart</button>
-                            </div>
-                        </div>
-                        
-                        <div class="product-card" data-product="transformer-9v">
-                            <div class="product-image">
-                                <img src="images/transformer-12v.jpg" alt="9-0-9V Transformer" loading="lazy">
-                            </div>
-                            <div class="product-info">
-                                <h4>9-0-9V Transformer</h4>
-                                <p>500mA Step-down transformer</p>
-                                <div class="price">₹249</div>
-                                <button class="add-to-cart" data-name="9-0-9V Transformer" data-price="249">Add to Cart</button>
-                            </div>
-                        </div>
-                        
-                        <div class="product-card" data-product="transformer-6v">
-                            <div class="product-image">
-                                <img src="images/transformer-12v.jpg" alt="6-0-6V Transformer" loading="lazy">
-                            </div>
-                            <div class="product-info">
-                                <h4>6-0-6V Transformer</h4>
-                                <p>1A / 500mA Step-down transformer</p>
-                                <div class="price">₹199</div>
-                                <button class="add-to-cart" data-name="6-0-6V Transformer" data-price="199">Add to Cart</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sensor Modules Category -->
-                <div class="category">
-                    <h3>📟 Sensor Modules</h3>
-                    <div class="products-grid">
-                        <div class="product-card" data-product="zmpt101b">
-                            <div class="product-image">
-                                <img src="images/zmpt101b.jpg" alt="ZMPT101B AC Voltage Sensor" loading="lazy">
-                            </div>
-                            <div class="product-info">
-                                <h4>ZMPT101B AC Voltage Sensor</h4>
-                                <p>Measures AC voltage accurately</p>
-                                <div class="price">₹149</div>
-                                <button class="add-to-cart" data-name="ZMPT101B AC Voltage Sensor" data-price="149">Add to Cart</button>
-                            </div>
-                        </div>
-                        
-                        <div class="product-card" data-product="ky002">
-                            <div class="product-image">
-                                <img src="images/ky002.jpg" alt="KY002 Shock Module" loading="lazy">
-                            </div>
-                            <div class="product-info">
-                                <h4>KY002 Shock Module</h4>
-                                <p>Detects vibrations and shocks</p>
-                                <div class="price">₹89</div>
-                                <button class="add-to-cart" data-name="KY002 Shock Module" data-price="89">Add to Cart</button>
-                            </div>
-                        </div>
-                        
-                        <div class="product-card" data-product="max4466">
-                            <div class="product-image">
-                                <img src="images/max4466.jpg" alt="MAX4466 Microphone Module" loading="lazy">
-                            </div>
-                            <div class="product-info">
-                                <h4>MAX4466 Microphone Module</h4>
-                                <p>Sound detection with gain control</p>
-                                <div class="price">₹129</div>
-                                <button class="add-to-cart" data-name="MAX4466 Microphone Module" data-price="129">Add to Cart</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Amplifier Module Category -->
-                <div class="category">
-                    <h3>🔊 Amplifier Module</h3>
-                    <div class="products-grid">
-                        <div class="product-card" data-product="tpa3116d2">
-                            <div class="product-image">
-                                <img src="images/tpa3116d2.jpg" alt="TPA3116D2 Audio Amplifier" loading="lazy">
-                            </div>
-                            <div class="product-info">
-                                <h4>TPA3116D2 Audio Amplifier</h4>
-                                <p>High-power audio amplifier board</p>
-                                <div class="price">₹399</div>
-                                <button class="add-to-cart" data-name="TPA3116D2 Audio Amplifier" data-price="399">Add to Cart</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Voltage Converters Category -->
-                <div class="category">
-                    <h3>🔋 Voltage Converters</h3>
-                    <div class="products-grid">
-                        <div class="product-card" data-product="xl7015">
-                            <div class="product-image">
-                                <img src="images/xl7015.jpg" alt="XL7015 DC-DC Converter" loading="lazy">
-                            </div>
-                            <div class="product-info">
-                                <h4>XL7015 DC-DC Converter</h4>
-                                <p>Buck converter (step-down)</p>
-                                <div class="price">₹179</div>
-                                <button class="add-to-cart" data-name="XL7015 DC-DC Converter" data-price="179">Add to Cart</button>
-                            </div>
-                        </div>
-                        
-                        <div class="product-card" data-product="xl4016e1">
-                            <div class="product-image">
-                                <img src="images/xl7015.jpg" alt="XL4016E1 Power Supply" loading="lazy">
-                            </div>
-                            <div class="product-info">
-                                <h4>XL4016E1 Power Supply</h4>
-                                <p>200W step-down power module</p>
-                                <div class="price">₹299</div>
-                                <button class="add-to-cart" data-name="XL4016E1 Power Supply" data-price="299">Add to Cart</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Relay Modules Category -->
-                <div class="category">
-                    <h3>⚙️ Relay Modules</h3>
-                    <div class="products-grid">
-                        <div class="product-card" data-product="relay-1ch">
-                            <div class="product-image">
-                                <img src="images/zmpt101b.jpg" alt="Single Channel Relay" loading="lazy">
-                            </div>
-                            <div class="product-info">
-                                <h4>Single Channel Relay</h4>
-                                <p>5V relay module with optocoupler</p>
-                                <div class="price">₹79</div>
-                                <button class="add-to-cart" data-name="Single Channel Relay" data-price="79">Add to Cart</button>
-                            </div>
-                        </div>
-                        
-                        <div class="product-card" data-product="relay-2ch">
-                            <div class="product-image">
-                                <img src="images/zmpt101b.jpg" alt="2-Channel Relay Module" loading="lazy">
-                            </div>
-                            <div class="product-info">
-                                <h4>2-Channel Relay Module</h4>
-                                <p>Dual relay with isolation</p>
-                                <div class="price">₹149</div>
-                                <button class="add-to-cart" data-name="2-Channel Relay Module" data-price="149">Add to Cart</button>
-                            </div>
-                        </div>
-                        
-                        <div class="product-card" data-product="relay-4ch">
-                            <div class="product-image">
-                                <img src="images/zmpt101b.jpg" alt="4-Channel Relay Module" loading="lazy">
-                            </div>
-                            <div class="product-info">
-                                <h4>4-Channel Relay Module</h4>
-                                <p>Quad relay with optocoupler</p>
-                                <div class="price">₹249</div>
-                                <button class="add-to-cart" data-name="4-Channel Relay Module" data-price="249">Add to Cart</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Motor Driver Category -->
-                <div class="category">
-                    <h3>🌀 Motor Driver</h3>
-                    <div class="products-grid">
-                        <div class="product-card" data-product="uln2003">
-                            <div class="product-image">
-                                <img src="images/tpa3116d2.jpg" alt="ULN2003 Motor Driver" loading="lazy">
-                            </div>
-                            <div class="product-info">
-                                <h4>ULN2003 Motor Driver</h4>
-                                <p>Stepper motor driver board</p>
-                                <div class="price">₹99</div>
-                                <button class="add-to-cart" data-name="ULN2003 Motor Driver" data-price="99">Add to Cart</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Cart Section -->
-    <section id="cart" class="cart-section">
-        <div class="container">
-            <h2>Shopping Cart</h2>
-            <div id="cart-items" class="cart-items">
-                <p class="empty-cart">Your cart is empty</p>
-            </div>
-            <div class="cart-total">
-                <h3>Total: ₹<span id="cart-total">0</span></h3>
-                <button id="checkout-btn" class="checkout-btn" disabled>Checkout</button>
-            </div>
-        </div>
-    </section>
-
     <!-- Contact Section -->
     <section id="contact" class="contact">
         <div class="container">
@@ -375,7 +163,7 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>📍 Pune | 📞 <a href="tel:+917350059825">+91 7350059825</a> | 📧 <a href="mailto:info@e-roots.com">info@e-roots.com</a></p>
+            <p>📍 Pune | 📞 <a href="tel:+917350059825">+91 7350059825</a> | 📧 <a href="mailto:info@e-roots.com">eroots2025@gmail.com</a></p>
             <p>&copy; 2024 E_roots. All rights reserved.</p>
         </div>
     </footer>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="E_roots - Electronic Components Store">
+    <title>E_roots | Our Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>E_roots</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html#home" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#services" class="nav-link">Services</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#projects" class="nav-link">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#store" class="nav-link">Stores</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#products" class="nav-link buy-link">Buy</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#cart" class="nav-link cart-link">
+                        Cart (<span id="cart-count">0</span>)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#contact" class="nav-link">Contact</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Store Section -->
+    <section id="store" class="store-section" style="padding-top: 120px;">
+        <div class="container">
+            <h2>Our Electronic Components Store</h2>
+            <p class="store-intro">Explore our wide range of electronic components, perfect for your next project or repair. From transformers to motor drivers, find everything you need right here.</p>
+            <div class="store-categories">
+                <a href="#products" class="store-category-link">View All Products</a>
+                <a href="#transformers-category" class="store-category-link">Transformers</a>
+                <a href="#sensor-modules-category" class="store-category-link">Sensor Modules</a>
+                <a href="#amplifier-module-category" class="store-category-link">Amplifier Modules</a>
+                <a href="#voltage-converters-category" class="store-category-link">Voltage Converters</a>
+                <a href="#relay-modules-category" class="store-category-link">Relay Modules</a>
+                <a href="#motor-driver-category" class="store-category-link">Motor Drivers</a>
+                <a href="#development-boards-category" class="store-category-link">Development Boards</a>
+                <a href="#power-components-category" class="store-category-link">Power Components</a>
+                <a href="#additional-sensors-category" class="store-category-link">Additional Sensors</a>
+                <a href="#electronics-accessories-category" class="store-category-link">Electronics Accessories</a>
+                <a href="#basic-components-category" class="store-category-link">Basic Components</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section (now part of the store) -->
+    <section id="products" class="products-section">
+        <div class="container">
+            <div class="product-categories">
+                
+                <!-- Transformers Category -->
+                <div class="category" id="transformers-category">
+                    <h3>🔌 Transformers</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="transformer-12v">
+                            <div class="product-image">
+                                <img src="images/transformer-12v.jpg" alt="12-0-12V Transformer" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>12-0-12V Transformer</h4>
+                                <p>1A / 500mA Step-down transformer</p>
+                                <div class="price">₹299</div>
+                                <button class="add-to-cart" data-name="12-0-12V Transformer" data-price="299">Add to Cart</button>
+                            </div>
+                        </div>
+                        
+                        <div class="product-card" data-product="transformer-9v">
+                            <div class="product-image">
+                                <img src="images/transformer-12v.jpg" alt="9-0-9V Transformer" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>9-0-9V Transformer</h4>
+                                <p>500mA Step-down transformer</p>
+                                <div class="price">₹249</div>
+                                <button class="add-to-cart" data-name="9-0-9V Transformer" data-price="249">Add to Cart</button>
+                            </div>
+                        </div>
+                        
+                        <div class="product-card" data-product="transformer-6v">
+                            <div class="product-image">
+                                <img src="images/transformer-12v.jpg" alt="6-0-6V Transformer" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>6-0-6V Transformer</h4>
+                                <p>1A / 500mA Step-down transformer</p>
+                                <div class="price">₹199</div>
+                                <button class="add-to-cart" data-name="6-0-6V Transformer" data-price="199">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sensor Modules Category -->
+                <div class="category" id="sensor-modules-category">
+                    <h3>📟 Sensor Modules</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="zmpt101b">
+                            <div class="product-image">
+                                <img src="images/zmpt101b.jpg" alt="ZMPT101B AC Voltage Sensor" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>ZMPT101B AC Voltage Sensor</h4>
+                                <p>Measures AC voltage accurately</p>
+                                <div class="price">₹149</div>
+                                <button class="add-to-cart" data-name="ZMPT101B AC Voltage Sensor" data-price="149">Add to Cart</button>
+                            </div>
+                        </div>
+                        
+                        <div class="product-card" data-product="ky002">
+                            <div class="product-image">
+                                <img src="images/ky002.jpg" alt="KY002 Shock Module" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>KY002 Shock Module</h4>
+                                <p>Detects vibrations and shocks</p>
+                                <div class="price">₹89</div>
+                                <button class="add-to-cart" data-name="KY002 Shock Module" data-price="89">Add to Cart</button>
+                            </div>
+                        </div>
+                        
+                        <div class="product-card" data-product="max4466">
+                            <div class="product-image">
+                                <img src="images/max4466.jpg" alt="MAX4466 Microphone Module" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>MAX4466 Microphone Module</h4>
+                                <p>Sound detection with gain control</p>
+                                <div class="price">₹129</div>
+                                <button class="add-to-cart" data-name="MAX4466 Microphone Module" data-price="129">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Amplifier Module Category -->
+                <div class="category" id="amplifier-module-category">
+                    <h3>🔊 Amplifier Module</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="tpa3116d2">
+                            <div class="product-image">
+                                <img src="images/tpa3116d2.jpg" alt="TPA3116D2 Audio Amplifier" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>TPA3116D2 Audio Amplifier</h4>
+                                <p>High-power audio amplifier board</p>
+                                <div class="price">₹399</div>
+                                <button class="add-to-cart" data-name="TPA3116D2 Audio Amplifier" data-price="399">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voltage Converters Category -->
+                <div class="category" id="voltage-converters-category">
+                    <h3>🔋 Voltage Converters</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="xl7015">
+                            <div class="product-image">
+                                <img src="images/xl7015.jpg" alt="XL7015 DC-DC Converter" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>XL7015 DC-DC Converter</h4>
+                                <p>Buck converter (step-down)</p>
+                                <div class="price">₹179</div>
+                                <button class="add-to-cart" data-name="XL7015 DC-DC Converter" data-price="179">Add to Cart</button>
+                            </div>
+                        </div>
+                        
+                        <div class="product-card" data-product="xl4016e1">
+                            <div class="product-image">
+                                <img src="images/xl7015.jpg" alt="XL4016E1 Power Supply" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>XL4016E1 Power Supply</h4>
+                                <p>200W step-down power module</p>
+                                <div class="price">₹299</div>
+                                <button class="add-to-cart" data-name="XL4016E1 Power Supply" data-price="299">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Relay Modules Category -->
+                <div class="category" id="relay-modules-category">
+                    <h3>⚙️ Relay Modules</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="relay-1ch">
+                            <div class="product-image">
+                                <img src="images/zmpt101b.jpg" alt="Single Channel Relay" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>Single Channel Relay</h4>
+                                <p>5V relay module with optocoupler</p>
+                                <div class="price">₹79</div>
+                                <button class="add-to-cart" data-name="Single Channel Relay" data-price="79">Add to Cart</button>
+                            </div>
+                        </div>
+                        
+                        <div class="product-card" data-product="relay-2ch">
+                            <div class="product-image">
+                                <img src="images/zmpt101b.jpg" alt="2-Channel Relay Module" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>2-Channel Relay Module</h4>
+                                <p>Dual relay with isolation</p>
+                                <div class="price">₹149</div>
+                                <button class="add-to-cart" data-name="2-Channel Relay Module" data-price="149">Add to Cart</button>
+                            </div>
+                        </div>
+                        
+                        <div class="product-card" data-product="relay-4ch">
+                            <div class="product-image">
+                                <img src="images/zmpt101b.jpg" alt="4-Channel Relay Module" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>4-Channel Relay Module</h4>
+                                <p>Quad relay with optocoupler</p>
+                                <div class="price">₹249</div>
+                                <button class="add-to-cart" data-name="4-Channel Relay Module" data-price="249">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Motor Driver Category -->
+                <div class="category" id="motor-driver-category">
+                    <h3>🌀 Motor Driver</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="uln2003">
+                            <div class="product-image">
+                                <img src="images/tpa3116d2.jpg" alt="ULN2003 Motor Driver" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>ULN2003 Motor Driver</h4>
+                                <p>Stepper motor driver board</p>
+                                <div class="price">₹99</div>
+                                <button class="add-to-cart" data-name="ULN2003 Motor Driver" data-price="99">Add to Cart</button>
+                            </div>
+                        </div>
+                        
+                          <div class="product-card" data-product="n30-motor">
+                            <div class="product-image">
+                                <img src="images/n30-motor.jpg" alt="N30 DC Motor with Blade" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>N30 DC Motor with Blade</h4>
+                                <p>3V to 9V High-Speed Mini Fan Motor</p>
+                                <div class="price">₹66 <span class="original-price">₹46</span></div>
+                                <button class="add-to-cart" data-name="N30 DC Motor with Blade" data-price="66">Add to Cart</button>
+                            </div>
+                        </div>
+                        
+                                  <div class="product-card" data-product="bo-motor">
+                            <div class="product-image"><img src="images/bo-motor.png" alt="Dual Shaft DC Geared Motor" loading="lazy"></div>                           
+                            
+                            <div class="product-info">
+                                <h4>Dual Shaft DC Geared Motor 100 RPM (BO Motor)</h4>
+                                <div class="price">₹43 <span class="original-price">₹63</span></div>
+                                <button class="add-to-cart" data-name="Dual Shaft DC Geared Motor" data-price="43">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Development Boards Category -->
+                <div class="category" id="development-boards-category">
+                    <h3>💻 Development Boards</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="esp8266-nodemcu">
+                            <div class="product-image">
+                                <img src="images/esp8266-nodemcu.jpg" alt="ESP8266 NodeMCU" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>ESP8266 NodeMCU CP2102 Wi-Fi Development Board</h4>
+                                <div class="price">₹289 <span class="original-price">₹299</span></div>
+                                <button class="add-to-cart" data-name="ESP8266 NodeMCU CP2102" data-price="289">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Power Components Category -->
+                <div class="category" id="power-components-category">
+                    <h3>⚡ Power Components</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="lm7809">
+                            <div class="product-image">
+                                <img src="images/lm7809.jpg" alt="LM7809 9V Voltage Regulator" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>LM7809 9V DC / AC, Three Terminal Voltage, Regulator Power</h4>
+                                <div class="price">₹298 <span class="original-price">₹314</span></div>
+                                <button class="add-to-cart" data-name="LM7809 9V Voltage Regulator" data-price="298">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="9v-battery">
+                            <div class="product-image">
+                                <img src="images/9v-battery.png" alt="9V Battery" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>9V Battery (Hi-Waote)</h4>
+                                <div class="price">₹26 <span class="original-price">₹35</span></div>
+                                <button class="add-to-cart" data-name="9V Battery (Hi-Waote)" data-price="26">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="9v-battery-snap">
+                            <div class="product-image">
+                                <img src="images/9v-connector.png" alt="9V Battery Snap Connector" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>9V Battery Snap Connector</h4>
+                                <div class="price">₹9 <span class="original-price">₹12</span></div>
+                                <button class="add-to-cart" data-name="9V Battery Snap Connector" data-price="9">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Sensors Category -->
+                <div class="category" id="additional-sensors-category">
+                    <h3>📡 Additional Sensors</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="dht11">
+                            <div class="product-image">
+                                <img src="images/dht11.jpg" alt="DHT11 Temperature and Humidity Sensor" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>DHT11 Temperature and Humidity Sensor Module</h4>
+                                <div class="price">₹96 <span class="original-price">₹146</span></div>
+                                <button class="add-to-cart" data-name="DHT11 Temperature & Humidity Sensor" data-price="96">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="pir-sensor">
+                            <div class="product-image">
+                                <img src="images/pir-sensor.png" alt="PIR Motion Detection Sensor" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>PIR Motion Detection Sensor - HC SR501</h4>
+                                <div class="price">₹89 <span class="original-price">₹95</span></div>
+                                <button class="add-to-cart" data-name="PIR Motion Detection Sensor" data-price="89">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="ir-sensor">
+                            <div class="product-image">
+                                <img src="images/ir-sensor.png" alt="IR Sensor Module" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>IR Sensor Module - LM393 Photoelectric Sensor Module</h4>
+                                <div class="price">₹35 <span class="original-price">₹40</span></div>
+                                <button class="add-to-cart" data-name="IR Sensor Module" data-price="35">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="ldr-sensor">
+                            <div class="product-image">
+                                <img src="images/ldr-sensor.png" alt="LDR Sensor" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>LDR Sensor (Light Dependent Resistor) - 5mm</h4>
+                                <div class="price">₹10 <span class="original-price">₹14</span></div>
+                                <button class="add-to-cart" data-name="LDR Sensor" data-price="10">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Electronics Accessories Category -->
+                <div class="category" id="electronics-accessories-category">
+                    <h3>🔗 Electronics Accessories</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="usb-cable">
+                            <div class="product-image">
+                                <img src="images/usb-cable.jpg" alt="USB to Micro USB Cable" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>USB to Micro USB Cable wire 1M for NodeMCU</h4>
+                                <div class="price">₹140 <span class="original-price">₹199</span></div>
+                                <button class="add-to-cart" data-name="USB to Micro USB Cable" data-price="140">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="jumper-mf">
+                            <div class="product-image">
+                                <img src="images/jumper-mf.jpg" alt="Male to Female Jumper Wires" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>Male to Female Jumper Wires (Set of 40)</h4>
+                                <div class="price">₹59 <span class="original-price">₹85</span></div>
+                                <button class="add-to-cart" data-name="Male to Female Jumper Wires" data-price="59">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="jumper-mm">
+                            <div class="product-image">
+                                <img src="images/jumper-mm.jpg" alt="Male to Male Jumper Wires" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>Male to Male Jumper Wires (Set of 40)</h4>
+                                <div class="price">₹56 <span class="original-price">₹70</span></div>
+                                <button class="add-to-cart" data-name="Male to Male Jumper Wires" data-price="56">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="breadboard">
+                            <div class="product-image">
+                                <img src="images/breadboard.jpg" alt="Breadboard GL-12" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>Breadboard - GL-12 840 Points</h4>
+                                <div class="price">₹58 <span class="original-price">₹76</span></div>
+                                <button class="add-to-cart" data-name="Breadboard - GL-12" data-price="58">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Basic Components Category -->
+                <div class="category" id="basic-components-category">
+                    <h3>💡 Basic Components</h3>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="push-button">
+                            <div class="product-image">
+                                <img src="images/push-button.jpg" alt="Push Button" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>Push Button (2 Pin Tactile Micro Switch)</h4>
+                                <div class="price">₹8 <span class="original-price">₹10</span></div>
+                                <button class="add-to-cart" data-name="Push Button" data-price="8">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="3mm-led-red">
+                            <div class="product-image">
+                                <img src="images/led-red.jpg" alt="3mm LED Red Color" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>3mm LED - Red Color</h4>
+                                <div class="price">₹6 <span class="original-price">₹9</span></div>
+                                <button class="add-to-cart" data-name="3mm LED - Red Color" data-price="6">Add to Cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="220-ohm-resistor">
+                            <div class="product-image">
+                                <img src="images/resistor-220.jpg" alt="220-ohm Resistor" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h4>220-ohm, 1/4-Watt Resistor (Pack of 10)</h4>
+                                <div class="price">₹9</div>
+                                <button class="add-to-cart" data-name="220-ohm Resistor Pack" data-price="9">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Section
+    <section id="cart" class="cart-section">
+        <div class="container">
+            <h2>Your Shopping Cart</h2>
+            <div id="cart-items"></div>
+            <div class="cart-summary">
+                <p>Total: ₹<span id="cart-total">0</span></p>
+                <button id="checkout-btn" class="btn-primary" disabled>Checkout</button>
+            </div>
+        </div>
+    </section> -->
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/917350059825" class="whatsapp-float" target="_blank">
+        <img src="images/whatsapp-icon.png" alt="WhatsApp" width="50" height="50">
+    </a>
+
+    <!-- Footer -->
+    <!-- Shopping Cart Section -->
+    <section id="cart" class="cart-section">
+        <div class="container">
+            <h2>Shopping Cart</h2>
+            <div id="cart-items" class="cart-items">
+                <p class="empty-cart">Your cart is empty</p>
+            </div>
+            <div class="cart-total">
+                <h3>Total: ₹<span id="cart-total">0</span></h3>
+                <button id="checkout-btn" class="checkout-btn" disabled>Checkout</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>📍 Pune | 📞 <a href="tel:+917350059825">+91 7350059825</a> | 📧 <a href="mailto:eroots2025@gmail.com">eroots2025@gmail.com</a></p>
+            <p>&copy; 2024 E_roots. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/917350059825" class="whatsapp-float" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+        </svg>
+    </a>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
+
