@@ -570,7 +570,7 @@ const Checkout: React.FC = () => {
                             ? 'border-primary-500 bg-primary-50' 
                             : 'border-gray-200'
                         }`}
-                        onClick={() => toast.info('UPI payment coming soon!')}
+                        onClick={() => toast('UPI payment coming soon!')}
                       >
                         <div className="flex items-center">
                           <div className="w-4 h-4 rounded-full border-2 border-gray-300 mr-3"></div>

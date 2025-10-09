@@ -66,6 +66,7 @@ export interface UserAddress {
 export interface UserInfo {
   firstName: string
   lastName: string
+  name?: string // For backward compatibility
   email: string
   phone: string
   address: UserAddress
