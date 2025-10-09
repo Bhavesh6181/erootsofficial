@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginWithGoogle = () => {
     // Redirect to Google OAuth
-    window.location.href = 'http://localhost:5000/api/auth/google'
+    window.location.href = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/google`
   }
 
   const handleGoogleCallback = async (token: string) => {
