@@ -1,6 +1,18 @@
 const nodemailer = require('nodemailer');
 
-// Email configuration
+// Check if SendGrid is available (for production environments like Render)
+const useSendGrid = !!process.env.SENDGRID_API_KEY;
+let sgMail;
+
+if (useSendGrid) {
+  sgMail = require('@sendgrid/mail');
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  console.log('✅ Using SendGrid API for email delivery');
+} else {
+  console.log('ℹ️  Using SMTP for email delivery (SendGrid not configured)');
+}
+
+// Email configuration for SMTP (fallback for local development)
 const emailConfig = {
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
   port: process.env.SMTP_PORT || 587,
@@ -11,17 +23,40 @@ const emailConfig = {
   },
 };
 
-// Create transporter
-const transporter = nodemailer.createTransport(emailConfig);
+// Create transporter (only if not using SendGrid)
+let transporter;
+if (!useSendGrid) {
+  transporter = nodemailer.createTransport(emailConfig);
 
-// Verify connection configuration
-transporter.verify((error, success) => {
-  if (error) {
-    console.error('Email service error:', error);
+  // Verify connection configuration
+  transporter.verify((error, success) => {
+    if (error) {
+      console.error('❌ Email service error:', error);
+    } else {
+      console.log('✅ Email service ready: Successfully connected to SMTP server');
+    }
+  });
+}
+
+// Helper function to send email via SendGrid or SMTP
+const sendEmail = async (mailOptions) => {
+  if (useSendGrid) {
+    // SendGrid format
+    const msg = {
+      to: mailOptions.to,
+      from: mailOptions.from.replace(/^".*" <(.*)>$/, '$1'), // Extract email from "Name <email>" format
+      subject: mailOptions.subject,
+      html: mailOptions.html,
+    };
+    
+    const result = await sgMail.send(msg);
+    return { success: true, messageId: result[0].headers['x-message-id'] };
   } else {
-    console.log('Email service ready: Successfully connected to SMTP server');
+    // SMTP format
+    const result = await transporter.sendMail(mailOptions);
+    return { success: true, messageId: result.messageId };
   }
-});
+};
 
 // Email templates
 const emailTemplates = {
@@ -501,11 +536,11 @@ const emailService = {
         html: template.html,
       };
 
-      const result = await transporter.sendMail(mailOptions);
-      console.log('Admin notification email sent successfully:', result.messageId);
+      const result = await sendEmail(mailOptions);
+      console.log('✅ Admin notification email sent successfully:', result.messageId);
       return { success: true, messageId: result.messageId };
     } catch (error) {
-      console.error('Error sending admin notification email:', error);
+      console.error('❌ Error sending admin notification email:', error);
       return { success: false, error: error.message };
     }
   },
@@ -522,11 +557,11 @@ const emailService = {
         html: template.html,
       };
 
-      const result = await transporter.sendMail(mailOptions);
-      console.log('Customer confirmation email sent successfully:', result.messageId);
+      const result = await sendEmail(mailOptions);
+      console.log('✅ Customer confirmation email sent successfully:', result.messageId);
       return { success: true, messageId: result.messageId };
     } catch (error) {
-      console.error('Error sending customer confirmation email:', error);
+      console.error('❌ Error sending customer confirmation email:', error);
       return { success: false, error: error.message };
     }
   },
@@ -543,11 +578,11 @@ const emailService = {
         html: template.html,
       };
 
-      const result = await transporter.sendMail(mailOptions);
-      console.log('Account credentials email sent successfully:', result.messageId);
+      const result = await sendEmail(mailOptions);
+      console.log('✅ Account credentials email sent successfully:', result.messageId);
       return { success: true, messageId: result.messageId };
     } catch (error) {
-      console.error('Error sending account credentials email:', error);
+      console.error('❌ Error sending account credentials email:', error);
       return { success: false, error: error.message };
     }
   },
@@ -575,7 +610,7 @@ const emailService = {
           null
       };
     } catch (error) {
-      console.error('Error sending order emails:', error);
+      console.error('❌ Error sending order emails:', error);
       return {
         adminEmail: { success: false, error: error.message },
         customerEmail: { success: false, error: error.message },
@@ -596,11 +631,11 @@ const emailService = {
         html: template.html,
       };
 
-      const result = await transporter.sendMail(mailOptions);
-      console.log('Order status update email sent successfully:', result.messageId);
+      const result = await sendEmail(mailOptions);
+      console.log('✅ Order status update email sent successfully:', result.messageId);
       return { success: true, messageId: result.messageId };
     } catch (error) {
-      console.error('Error sending order status update email:', error);
+      console.error('❌ Error sending order status update email:', error);
       return { success: false, error: error.message };
     }
   },
@@ -608,10 +643,21 @@ const emailService = {
   // Test email configuration
   testEmailConfig: async () => {
     try {
-      await transporter.verify();
-      return { success: true, message: 'Email configuration is valid' };
+      if (useSendGrid) {
+        // Test SendGrid by attempting to send a test email to admin
+        await sendEmail({
+          from: `"E_roots Technology" <${process.env.SMTP_USER || 'eroots2025@gmail.com'}>`,
+          to: process.env.ADMIN_EMAIL || 'eroots2025@gmail.com',
+          subject: 'Test Email - Eroots Backend',
+          html: '<p>This is a test email from Eroots backend.</p>'
+        });
+        return { success: true, message: 'SendGrid email configuration is valid' };
+      } else {
+        await transporter.verify();
+        return { success: true, message: 'SMTP email configuration is valid' };
+      }
     } catch (error) {
-      console.error('Email configuration test failed:', error);
+      console.error('❌ Email configuration test failed:', error);
       return { success: false, error: error.message };
     }
   }
@@ -835,7 +881,7 @@ emailService.sendContactRequestEmails = async (request) => {
     
     // Send notification to admin
     const adminTemplate = contactRequestTemplates.adminNotification(request);
-    await transporter.sendMail({
+    await sendEmail({
       from: '"Eroots Technology" <eroots2025@gmail.com>',
       to: adminEmail,
       subject: adminTemplate.subject,
@@ -844,7 +890,7 @@ emailService.sendContactRequestEmails = async (request) => {
 
     // Send confirmation to customer
     const customerTemplate = contactRequestTemplates.customerConfirmation(request);
-    await transporter.sendMail({
+    await sendEmail({
       from: '"Eroots Technology" <eroots2025@gmail.com>',
       to: request.email,
       subject: customerTemplate.subject,
@@ -855,7 +901,7 @@ emailService.sendContactRequestEmails = async (request) => {
     return { success: true };
   } catch (error) {
     console.error('❌ Error sending contact request emails:', error);
-    return { success: false, error: error.message };
+    throw error; // Re-throw to be caught by route handler
   }
 };
 
