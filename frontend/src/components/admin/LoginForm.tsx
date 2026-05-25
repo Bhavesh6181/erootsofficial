@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { useAuth } from '../../contexts/AuthContext'
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react'
 import toast from 'react-hot-toast'
 import GoogleLoginButton from '../GoogleLoginButton'
-import { isGoogleLoginEnabled } from '../../utils/runtime'
-import { api } from '../../utils/api'
 
 interface LoginFormData {
   email: string
@@ -19,7 +17,6 @@ interface LoginFormProps {
 
 const LoginForm: React.FC<LoginFormProps> = ({ setIsLoading }) => {
   const [showPassword, setShowPassword] = useState(false)
-  const [isGoogleAvailable, setIsGoogleAvailable] = useState(isGoogleLoginEnabled)
   const { login } = useAuth()
   
   const {
@@ -27,31 +24,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsLoading }) => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormData>()
-
-  useEffect(() => {
-    let isMounted = true
-
-    const checkAuthProviders = async () => {
-      try {
-        const response = await api.get('/auth/providers')
-        if (!isMounted) {
-          return
-        }
-
-        setIsGoogleAvailable(Boolean(response.data?.data?.google?.enabled) || isGoogleLoginEnabled)
-      } catch (error) {
-        if (isMounted) {
-          setIsGoogleAvailable(isGoogleLoginEnabled)
-        }
-      }
-    }
-
-    checkAuthProviders()
-
-    return () => {
-      isMounted = false
-    }
-  }, [])
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true)
@@ -142,24 +114,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsLoading }) => {
         </motion.button>
       </form>
 
-      {isGoogleAvailable ? (
-        <>
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
-            </div>
-          </div>
-
-          <GoogleLoginButton className="w-full" size="md" text="Sign in with Google" />
-        </>
-      ) : (
-        <div className="mt-6 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600">
-          Google sign-in will appear automatically after Google OAuth is configured on the backend.
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-300" />
         </div>
-      )}
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-white text-gray-500">Or continue with</span>
+        </div>
+      </div>
+
+      <GoogleLoginButton className="w-full" size="md" text="Sign in with Google" />
     </motion.div>
   )
 }
