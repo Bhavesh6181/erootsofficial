@@ -9,7 +9,6 @@ import { enabledPaymentMethods } from '../utils/runtime'
 import { UserInfo } from '../types'
 
 const checkoutSupportsCod = enabledPaymentMethods.includes('COD')
-const hasHiddenPaymentMethods = enabledPaymentMethods.some((method) => method !== 'COD')
 
 const Checkout: React.FC = () => {
   const { cart, getTotalPrice, clearCart } = useCart()
@@ -167,7 +166,7 @@ const Checkout: React.FC = () => {
     const { firstName, lastName, email, phone, address } = userInfo
 
     if (!checkoutSupportsCod) {
-      toast.error('Checkout is temporarily unavailable. Please contact support before placing an order.')
+      toast.error('Checkout is currently unavailable. Please contact support before placing an order.')
       return false
     }
 
@@ -291,14 +290,7 @@ const Checkout: React.FC = () => {
 
           {!checkoutSupportsCod && (
             <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-              Checkout is currently unavailable because no supported payment method is active in production.
-            </div>
-          )}
-
-          {hasHiddenPaymentMethods && (
-            <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-              Only Cash on Delivery is available in the storefront right now. Online payment methods stay hidden until
-              a verified payment integration is live.
+              Checkout is currently unavailable. Please contact support before placing an order.
             </div>
           )}
 
@@ -474,8 +466,7 @@ const Checkout: React.FC = () => {
                         <div className="flex-1">
                           <h3 className="text-base font-semibold text-gray-900">Cash on Delivery</h3>
                           <p className="mt-1 text-sm text-gray-600">
-                            Pay when the order reaches you. This storefront only exposes verified payment flows that are
-                            live in production.
+                            Pay when the order reaches you.
                           </p>
                           <div className="mt-3 flex flex-wrap gap-2 text-xs">
                             <span className="rounded-full bg-white px-3 py-1 text-green-700 ring-1 ring-green-200">
@@ -543,8 +534,7 @@ const Checkout: React.FC = () => {
                     <div className="flex items-start gap-3">
                       <ShieldCheck className="mt-0.5 h-4 w-4 text-primary-600" />
                       <p>
-                        Your order total is recalculated on the server before confirmation, and invoice access is
-                        protected after checkout.
+                        We will confirm your order details and share your invoice after checkout.
                       </p>
                     </div>
                   </div>

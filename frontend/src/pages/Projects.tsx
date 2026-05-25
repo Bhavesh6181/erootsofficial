@@ -64,10 +64,10 @@ const Projects: React.FC = () => {
 
         if (canUseDemoFallbacks) {
           setProjects(demoProjects)
-          setLoadError('Showing local preview projects because the live API is unavailable.')
+          setLoadError(null)
         } else {
           setProjects([])
-          setLoadError('Live project data is temporarily unavailable. Please contact us for recent case studies.')
+          setLoadError('Projects are currently unavailable. Please contact us for recent work samples.')
         }
       } finally {
         setLoading(false)
@@ -121,16 +121,10 @@ const Projects: React.FC = () => {
               </div>
             </div>
 
-            {loadError && (
-              <div className="mb-8 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-                {loadError}
-              </div>
-            )}
-
             {projects.length === 0 ? (
               <div className="bg-white rounded-xl shadow-lg p-8 text-center">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-3">Projects Unavailable</h2>
-                <p className="text-gray-600">Please contact us directly for recent work samples and case studies.</p>
+                <p className="text-gray-600">{loadError || 'Please contact us directly for recent work samples and case studies.'}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

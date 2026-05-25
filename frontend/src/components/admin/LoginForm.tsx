@@ -45,10 +45,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsLoading }) => {
       className="bg-white rounded-2xl shadow-xl p-8"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-900">
-          Admin access is provisioned separately. Public self-registration is disabled in production.
-        </div>
-
         <div>
           <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
             Email Address

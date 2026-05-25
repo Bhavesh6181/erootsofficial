@@ -41,7 +41,7 @@ const FeedbackForm: React.FC = () => {
 
     try {
       await api.post('/testimonials/submit', data)
-      toast.success('Thanks for your feedback. It will appear once approved.')
+      toast.success('Thanks for your feedback.')
       reset({ name: '', email: '', content: '', rating: 5 })
       setSelectedRating(5)
     } catch (error: any) {
@@ -75,7 +75,7 @@ const FeedbackForm: React.FC = () => {
               Share Your <span className="text-gradient">Feedback</span>
             </h2>
             <p className="mt-4 text-lg text-gray-600">
-              Worked with Eroots? Leave a quick review. Every submission is screened before it goes live.
+              Worked with Eroots? Leave a quick review and share your experience.
             </p>
           </div>
 
@@ -170,10 +170,6 @@ const FeedbackForm: React.FC = () => {
                   placeholder="Tell people what your experience with Eroots was like."
                 />
                 {errors.content && <p className="mt-1 text-sm text-red-600">{errors.content.message}</p>}
-              </div>
-
-              <div className="rounded-2xl border border-primary-100 bg-primary-50 px-4 py-3 text-sm text-primary-800">
-                Reviews stay hidden until an admin approves them, so spam and incomplete submissions never show up publicly.
               </div>
 
               <button

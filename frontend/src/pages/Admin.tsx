@@ -47,10 +47,7 @@ const Admin: React.FC = () => {
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
                 <span className="text-gradient">Eroots</span> Admin
               </h2>
-              <p className="text-gray-600">Sign in to access the production admin dashboard.</p>
-              <p className="mt-2 text-sm text-gray-500">
-                Customer order tracking also uses this sign-in page, but only admin accounts can open the dashboard.
-              </p>
+              <p className="text-gray-600">Sign in to continue.</p>
             </motion.div>
             
             <LoginForm setIsLoading={setIsLoginLoading} />

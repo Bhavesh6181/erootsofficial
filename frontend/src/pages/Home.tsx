@@ -76,7 +76,6 @@ const Home: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([])
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [loading, setLoading] = useState(true)
-  const [contentWarning, setContentWarning] = useState<string | null>(null)
   const location = useLocation()
 
   useEffect(() => {
@@ -91,18 +90,15 @@ const Home: React.FC = () => {
         setServices(servicesRes.data.data)
         setProjects(projectsRes.data.data)
         setTestimonials(testimonialsRes.data.data)
-        setContentWarning(null)
       } catch (error) {
         if (canUseDemoFallbacks) {
           setServices(demoServices)
           setProjects(demoProjects)
           setTestimonials([])
-          setContentWarning('Showing local preview content because the live API is unavailable.')
         } else {
           setServices([])
           setProjects([])
           setTestimonials([])
-          setContentWarning('Some live sections are temporarily unavailable. You can still contact us below.')
         }
       } finally {
         setLoading(false)
@@ -160,13 +156,6 @@ const Home: React.FC = () => {
 
       <div className="pt-16 relative">
         <Hero />
-        {contentWarning && (
-          <div className="container-custom px-4 pt-6">
-            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-              {contentWarning}
-            </div>
-          </div>
-        )}
         {services.length > 0 && <Services services={services} />}
         {projects.length > 0 && <Projects projects={projects} />}
         <Testimonials testimonials={testimonials} />

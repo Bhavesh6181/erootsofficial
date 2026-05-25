@@ -66,11 +66,11 @@ const Store: React.FC = () => {
         if (canUseDemoFallbacks) {
           setProducts(demoProducts)
           setFilteredProducts(demoProducts)
-          setLoadError('Showing local preview products because the live catalog is unavailable.')
+          setLoadError(null)
         } else {
           setProducts([])
           setFilteredProducts([])
-          setLoadError('The live catalog is temporarily unavailable. Please try again shortly.')
+          setLoadError('Products are currently unavailable. Please try again shortly.')
         }
       } finally {
         setLoading(false)
@@ -160,12 +160,6 @@ const Store: React.FC = () => {
         </div>
 
         <div className="container-custom py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
-          {loadError && (
-            <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-              {loadError}
-            </div>
-          )}
-
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-6">
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
               <div className="flex-1 relative">
@@ -219,7 +213,7 @@ const Store: React.FC = () => {
               </h3>
               <p className="text-sm sm:text-base text-gray-600">
                 {loadError
-                  ? 'We could not load live products right now. Please try again in a few minutes.'
+                  ? loadError
                   : 'Try adjusting your search or filter criteria.'}
               </p>
             </div>
