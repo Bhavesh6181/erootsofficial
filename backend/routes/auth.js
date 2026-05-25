@@ -4,8 +4,25 @@ const User = require('../models/User');
 const { auth } = require('../middleware/auth');
 const { passport, generateToken } = require('../config/passport');
 const { signToken } = require('../config/security');
+const {
+  getClientUrl,
+  getRoleForEmail,
+  isGoogleAuthConfigured,
+  normalizeEmail,
+} = require('../config/appConfig');
 
 const router = express.Router();
+
+router.get('/providers', (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      google: {
+        enabled: isGoogleAuthConfigured(),
+      },
+    },
+  });
+});
 
 // Register (for creating admin user)
 router.post('/register', [
@@ -99,7 +116,8 @@ router.post('/login', [
       });
     }
 
-    const { email, password } = req.body;
+    const email = normalizeEmail(req.body.email);
+    const { password } = req.body;
 
     // Find user by email
     const user = await User.findOne({ email });
@@ -117,6 +135,12 @@ router.post('/login', [
         success: false,
         message: 'Invalid email or password'
       });
+    }
+
+    const nextRole = getRoleForEmail(user.email, user.role);
+    if (user.role !== nextRole) {
+      user.role = nextRole;
+      await user.save();
     }
 
     // Generate JWT token
@@ -172,7 +196,7 @@ router.post('/logout', auth, (req, res) => {
 });
 
 // Google OAuth Routes (only if configured)
-if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_ID !== 'your_google_client_id_here') {
+if (isGoogleAuthConfigured()) {
   // Initiate Google OAuth
   router.get('/google', passport.authenticate('google', {
     scope: ['profile', 'email']
@@ -187,11 +211,11 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_ID !== 'your_googl
         const token = generateToken(req.user);
         
         // Redirect to frontend with token
-        const redirectUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/auth/callback?token=${token}`;
+        const redirectUrl = `${getClientUrl()}/auth/callback?token=${token}`;
         res.redirect(redirectUrl);
       } catch (error) {
         console.error('Google OAuth callback error:', error);
-        const errorUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/auth/callback?error=authentication_failed`;
+        const errorUrl = `${getClientUrl()}/auth/callback?error=authentication_failed`;
         res.redirect(errorUrl);
       }
     }

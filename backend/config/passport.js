@@ -2,10 +2,14 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/User');
 const { signToken } = require('./security');
+const {
+  getRoleForEmail,
+  isGoogleAuthConfigured,
+  normalizeEmail,
+} = require('./appConfig');
 
 // Configure Google OAuth Strategy (only if credentials are provided)
-if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && 
-    process.env.GOOGLE_CLIENT_ID !== 'your_google_client_id_here') {
+if (isGoogleAuthConfigured()) {
   
   passport.use('google', new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
@@ -13,15 +17,22 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET &&
     callbackURL: process.env.GOOGLE_CALLBACK_URL || '/api/auth/google/callback'
   }, async (accessToken, refreshToken, profile, done) => {
   try {
+    const email = normalizeEmail(profile.emails?.[0]?.value);
+
     // Check if user already exists with this Google ID
     let existingUser = await User.findOne({ googleId: profile.id });
     
     if (existingUser) {
+      const nextRole = getRoleForEmail(existingUser.email, existingUser.role);
+      if (existingUser.role !== nextRole) {
+        existingUser.role = nextRole;
+        await existingUser.save();
+      }
       return done(null, existingUser);
     }
     
     // Check if user exists with same email
-    existingUser = await User.findOne({ email: profile.emails[0].value });
+    existingUser = await User.findOne({ email });
     
     if (existingUser) {
       // Link Google account to existing user
@@ -30,6 +41,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET &&
       existingUser.name = profile.displayName;
       existingUser.profilePicture = profile.photos[0]?.value;
       existingUser.isVerified = true; // Google accounts are pre-verified
+      existingUser.role = getRoleForEmail(email, existingUser.role);
       await existingUser.save();
       return done(null, existingUser);
     }
@@ -37,11 +49,12 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET &&
     // Create new user
     const newUser = new User({
       googleId: profile.id,
-      email: profile.emails[0].value,
+      email,
       name: profile.displayName,
       profilePicture: profile.photos[0]?.value,
       authProvider: 'google',
       isVerified: true,
+      role: getRoleForEmail(email, 'user'),
     });
     
     await newUser.save();
