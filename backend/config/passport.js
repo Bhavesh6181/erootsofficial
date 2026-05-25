@@ -1,7 +1,7 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/User');
-const jwt = require('jsonwebtoken');
+const { signToken } = require('./security');
 
 // Configure Google OAuth Strategy (only if credentials are provided)
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && 
@@ -73,14 +73,13 @@ passport.deserializeUser(async (id, done) => {
 
 // Generate JWT token for user
 const generateToken = (user) => {
-  return jwt.sign(
+  return signToken(
     { 
       userId: user._id, 
       email: user.email, 
       role: user.role,
       authProvider: user.authProvider 
     },
-    process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRE || '7d' }
   );
 };

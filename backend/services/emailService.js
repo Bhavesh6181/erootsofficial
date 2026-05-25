@@ -2,6 +2,9 @@ const nodemailer = require('nodemailer');
 
 // Check if SendGrid is available (for production environments like Render)
 const useSendGrid = !!process.env.SENDGRID_API_KEY;
+const smtpUser = process.env.SMTP_USER || process.env.EMAIL_USER || '';
+const smtpPass = process.env.SMTP_PASS || process.env.EMAIL_PASS || process.env.EMAIL_PASSWORD || '';
+const hasSmtpCredentials = Boolean(smtpUser && smtpPass);
 let sgMail;
 
 if (useSendGrid) {
@@ -18,24 +21,28 @@ const emailConfig = {
   port: process.env.SMTP_PORT || 587,
   secure: false, // true for 465, false for other ports
   auth: {
-    user: process.env.SMTP_USER || 'eroots2025@gmail.com',
-    pass: process.env.SMTP_PASS || process.env.EMAIL_PASSWORD,
+    user: smtpUser,
+    pass: smtpPass,
   },
 };
 
 // Create transporter (only if not using SendGrid)
 let transporter;
 if (!useSendGrid) {
-  transporter = nodemailer.createTransport(emailConfig);
+  if (hasSmtpCredentials) {
+    transporter = nodemailer.createTransport(emailConfig);
 
   // Verify connection configuration
-  transporter.verify((error, success) => {
+  transporter.verify((error) => {
     if (error) {
       console.error('❌ Email service error:', error);
     } else {
       console.log('✅ Email service ready: Successfully connected to SMTP server');
     }
   });
+  } else {
+    console.warn('Email delivery disabled: SMTP credentials are not configured.');
+  }
 }
 
 // Helper function to send email via SendGrid or SMTP
@@ -52,6 +59,10 @@ const sendEmail = async (mailOptions) => {
     const result = await sgMail.send(msg);
     return { success: true, messageId: result[0].headers['x-message-id'] };
   } else {
+    if (!transporter) {
+      return { success: false, skipped: true, reason: 'Email delivery is not configured.' };
+    }
+
     // SMTP format
     const result = await transporter.sendMail(mailOptions);
     return { success: true, messageId: result.messageId };
@@ -526,7 +537,7 @@ const emailService = {
   // Send admin notification for new order
   sendAdminOrderNotification: async (order) => {
     try {
-      const adminEmail = 'eroots2025@gmail.com';
+      const adminEmail = process.env.ADMIN_EMAIL || 'eroots2025@gmail.com';
       const template = emailTemplates.adminOrderNotification(order);
       
       const mailOptions = {
@@ -537,6 +548,11 @@ const emailService = {
       };
 
       const result = await sendEmail(mailOptions);
+      if (result.skipped) {
+        console.warn('Admin notification email skipped:', result.reason);
+        return result;
+      }
+
       console.log('✅ Admin notification email sent successfully:', result.messageId);
       return { success: true, messageId: result.messageId };
     } catch (error) {
@@ -558,6 +574,11 @@ const emailService = {
       };
 
       const result = await sendEmail(mailOptions);
+      if (result.skipped) {
+        console.warn('Customer confirmation email skipped:', result.reason);
+        return result;
+      }
+
       console.log('✅ Customer confirmation email sent successfully:', result.messageId);
       return { success: true, messageId: result.messageId };
     } catch (error) {
@@ -579,6 +600,11 @@ const emailService = {
       };
 
       const result = await sendEmail(mailOptions);
+      if (result.skipped) {
+        console.warn('Account credentials email skipped:', result.reason);
+        return result;
+      }
+
       console.log('✅ Account credentials email sent successfully:', result.messageId);
       return { success: true, messageId: result.messageId };
     } catch (error) {
@@ -632,6 +658,11 @@ const emailService = {
       };
 
       const result = await sendEmail(mailOptions);
+      if (result.skipped) {
+        console.warn('Order status update email skipped:', result.reason);
+        return result;
+      }
+
       console.log('✅ Order status update email sent successfully:', result.messageId);
       return { success: true, messageId: result.messageId };
     } catch (error) {
@@ -646,13 +677,17 @@ const emailService = {
       if (useSendGrid) {
         // Test SendGrid by attempting to send a test email to admin
         await sendEmail({
-          from: `"E_roots Technology" <${process.env.SMTP_USER || 'eroots2025@gmail.com'}>`,
+          from: `"E_roots Technology" <${smtpUser || 'eroots2025@gmail.com'}>`,
           to: process.env.ADMIN_EMAIL || 'eroots2025@gmail.com',
           subject: 'Test Email - Eroots Backend',
           html: '<p>This is a test email from Eroots backend.</p>'
         });
         return { success: true, message: 'SendGrid email configuration is valid' };
       } else {
+        if (!transporter) {
+          return { success: false, skipped: true, error: 'SMTP credentials are not configured.' };
+        }
+
         await transporter.verify();
         return { success: true, message: 'SMTP email configuration is valid' };
       }
@@ -881,7 +916,7 @@ emailService.sendContactRequestEmails = async (request) => {
     
     // Send notification to admin
     const adminTemplate = contactRequestTemplates.adminNotification(request);
-    await sendEmail({
+    const adminResult = await sendEmail({
       from: '"Eroots Technology" <eroots2025@gmail.com>',
       to: adminEmail,
       subject: adminTemplate.subject,
@@ -890,7 +925,7 @@ emailService.sendContactRequestEmails = async (request) => {
 
     // Send confirmation to customer
     const customerTemplate = contactRequestTemplates.customerConfirmation(request);
-    await sendEmail({
+    const customerResult = await sendEmail({
       from: '"Eroots Technology" <eroots2025@gmail.com>',
       to: request.email,
       subject: customerTemplate.subject,
@@ -898,6 +933,11 @@ emailService.sendContactRequestEmails = async (request) => {
     });
 
     console.log(`✅ Contact request emails sent successfully to admin and ${request.email}`);
+    if (adminResult.skipped || customerResult.skipped) {
+      console.warn(`Contact request emails skipped: Email delivery is not configured for ${request.email}`);
+      return { success: false, skipped: true };
+    }
+
     return { success: true };
   } catch (error) {
     console.error('❌ Error sending contact request emails:', error);

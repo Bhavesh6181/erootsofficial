@@ -1,14 +1,36 @@
 import React, { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Service } from '../types'
 import { api } from '../utils/api'
+import { canUseDemoFallbacks } from '../utils/runtime'
+
+const demoServices: Service[] = [
+  {
+    title: 'Embedded Systems Development',
+    description: 'Custom embedded solutions for reliable field deployments.',
+    icon: '[ES]',
+    features: ['Microcontroller Programming', 'Hardware Integration', 'Firmware Development'],
+  },
+  {
+    title: 'IoT Solutions',
+    description: 'Connected systems, sensor pipelines, and remote monitoring.',
+    icon: '[IoT]',
+    features: ['Sensor Networks', 'Cloud Integration', 'Data Analytics'],
+  },
+  {
+    title: 'PCB Design & Layout',
+    description: 'Production-focused schematic capture and manufacturable layouts.',
+    icon: '[PCB]',
+    features: ['Schematic Design', 'Layout Optimization', 'Prototyping'],
+  },
+]
 
 const Services: React.FC = () => {
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -20,47 +42,17 @@ const Services: React.FC = () => {
       try {
         const response = await api.get('/services')
         setServices(response.data.data)
+        setLoadError(null)
       } catch (error) {
         console.error('Error fetching services:', error)
-        // Set default services if API fails
-        setServices([
-          {
-            title: 'Embedded Systems Development',
-            description: 'Custom embedded solutions for your projects with real-time performance and reliability',
-            icon: '🔧',
-            features: ['Microcontroller Programming', 'Hardware Integration', 'Real-time Systems', 'Firmware Development'],
-          },
-          {
-            title: 'IoT Solutions',
-            description: 'Connected devices and smart systems that bring your ideas to life',
-            icon: '🌐',
-            features: ['Sensor Networks', 'Cloud Integration', 'Data Analytics', 'Remote Monitoring'],
-          },
-          {
-            title: 'PCB Design & Layout',
-            description: 'Professional circuit board design with optimized performance and manufacturability',
-            icon: '⚡',
-            features: ['Schematic Design', 'Layout Optimization', 'Prototyping', 'Manufacturing Support'],
-          },
-          {
-            title: 'Antenna Design & RF',
-            description: 'Advanced RF design and optimization for wireless communication systems',
-            icon: '📡',
-            features: ['RF Simulation', 'Prototyping', 'Testing', 'Performance Optimization'],
-          },
-          {
-            title: 'Web & App Development',
-            description: 'Modern web and mobile applications with cutting-edge technology',
-            icon: '💻',
-            features: ['Frontend Development', 'Backend Services', 'Mobile Apps', 'API Integration'],
-          },
-          {
-            title: 'Electronic Components',
-            description: 'High-quality electronic components and modules for your projects',
-            icon: '🔌',
-            features: ['Microcontrollers', 'Sensors', 'Motors', 'Power Modules'],
-          },
-        ])
+
+        if (canUseDemoFallbacks) {
+          setServices(demoServices)
+          setLoadError('Showing local preview services because the live API is unavailable.')
+        } else {
+          setServices([])
+          setLoadError('Live service data is temporarily unavailable. Please contact us directly.')
+        }
       } finally {
         setLoading(false)
       }
@@ -84,86 +76,79 @@ const Services: React.FC = () => {
     <>
       <Helmet>
         <title>Services - Eroots Technology</title>
-        <meta name="description" content="Professional engineering services including embedded systems, IoT development, PCB design, antenna design, and web development." />
+        <meta
+          name="description"
+          content="Professional engineering services including embedded systems, IoT development, PCB design, antenna design, and web development."
+        />
       </Helmet>
 
       <div className="min-h-screen pt-16 relative">
         <div className="absolute inset-0 bg-white/80 backdrop-blur-sm"></div>
         <div className="relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          
-          {/* Header */}
-          <div className="mb-12">
-            <button
-              onClick={() => navigate('/')}
-              className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              Back to Home
-            </button>
-            
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center"
-            >
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                Our <span className="text-gradient">Services</span>
-              </h1>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                We provide comprehensive engineering solutions to bring your ideas to life
-                with cutting-edge technology and expert craftsmanship.
-              </p>
-            </motion.div>
-          </div>
-
-          {/* Services Grid */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          >
-            {services.map((service, index) => (
-              <motion.div
-                key={service._id || index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * index }}
-                whileHover={{ y: -5 }}
-                className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 group"
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="mb-12">
+              <button
+                onClick={() => navigate('/')}
+                className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6"
               >
-                <div className="text-center">
-                  <div className="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                    {service.icon}
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                    {service.title}
-                  </h3>
-                  <p className="text-gray-600 mb-6 leading-relaxed">
-                    {service.description}
-                  </p>
-                  
-                  {service.features && service.features.length > 0 && (
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-gray-900 mb-3">Key Features:</h4>
-                      <ul className="text-sm text-gray-600 space-y-1">
-                        {service.features.map((feature, featureIndex) => (
-                          <li key={featureIndex} className="flex items-center">
-                            <span className="w-2 h-2 bg-primary-500 rounded-full mr-3 flex-shrink-0"></span>
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+                <ArrowLeft className="w-5 h-5 mr-2" />
+                Back to Home
+              </button>
 
-          {/* Call to Action */}
-        </div>
+              <div className="text-center">
+                <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                  Our <span className="text-gradient">Services</span>
+                </h1>
+                <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                  We provide engineering services built for real deployment, manufacturability, and support.
+                </p>
+              </div>
+            </div>
+
+            {loadError && (
+              <div className="mb-8 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                {loadError}
+              </div>
+            )}
+
+            {services.length === 0 ? (
+              <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-3">Services Unavailable</h2>
+                <p className="text-gray-600">Please use the contact form or call us while we restore live content.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {services.map((service, index) => (
+                  <div
+                    key={service._id || index}
+                    className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-8 group"
+                  >
+                    <div className="text-center">
+                      <div className="text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                        {service.icon}
+                      </div>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-4">{service.title}</h3>
+                      <p className="text-gray-600 mb-6 leading-relaxed">{service.description}</p>
+
+                      {service.features && service.features.length > 0 && (
+                        <div className="space-y-2">
+                          <h4 className="font-semibold text-gray-900 mb-3">Key Features</h4>
+                          <ul className="text-sm text-gray-600 space-y-1">
+                            {service.features.map((feature, featureIndex) => (
+                              <li key={featureIndex} className="flex items-center">
+                                <span className="w-2 h-2 bg-primary-500 rounded-full mr-3 flex-shrink-0"></span>
+                                {feature}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>

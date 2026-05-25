@@ -1,9 +1,9 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const { auth } = require('../middleware/auth');
 const { passport, generateToken } = require('../config/passport');
+const { signToken } = require('../config/security');
 
 const router = express.Router();
 
@@ -13,6 +13,21 @@ router.post('/register', [
   body('password').isLength({ min: 6 }),
 ], async (req, res) => {
   try {
+    if (process.env.ENABLE_ADMIN_BOOTSTRAP !== 'true') {
+      return res.status(403).json({
+        success: false,
+        message: 'Registration is disabled. Use the create-admin script for initial setup.'
+      });
+    }
+
+    const existingAdmin = await User.findOne({ role: 'admin' });
+    if (existingAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: 'Admin bootstrap is no longer available after the first admin is created.'
+      });
+    }
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -43,9 +58,8 @@ router.post('/register', [
     await user.save();
 
     // Generate JWT token
-    const token = jwt.sign(
+    const token = signToken(
       { userId: user._id, email: user.email, role: user.role },
-      process.env.JWT_SECRET || 'fallback_secret',
       { expiresIn: '7d' }
     );
 
@@ -106,9 +120,8 @@ router.post('/login', [
     }
 
     // Generate JWT token
-    const token = jwt.sign(
+    const token = signToken(
       { userId: user._id, email: user.email, role: user.role },
-      process.env.JWT_SECRET || 'fallback_secret',
       { expiresIn: '7d' }
     );
 

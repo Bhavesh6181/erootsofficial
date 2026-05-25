@@ -1,297 +1,295 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Plus, Edit, Trash2, Save, X } from 'lucide-react'
+import { Edit, Plus, Save, Trash2, Wrench, X } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { Service } from '../../types'
 import { api } from '../../utils/api'
-import toast from 'react-hot-toast'
+
+const emptyService: Partial<Service> = {
+  title: '',
+  description: '',
+  icon: '',
+  features: [],
+}
 
 const ServicesManagement: React.FC = () => {
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
-  const [formData, setFormData] = useState<Partial<Service>>({
-    title: '',
-    description: '',
-    icon: '',
-    features: [],
-  })
+  const [formData, setFormData] = useState<Partial<Service>>(emptyService)
 
   useEffect(() => {
     fetchServices()
   }, [])
 
+  const resetForm = () => {
+    setEditingId(null)
+    setFormData(emptyService)
+    setShowForm(false)
+  }
+
   const fetchServices = async () => {
     try {
+      setLoading(true)
       const response = await api.get('/services')
       setServices(response.data.data)
+      setLoadError(null)
     } catch (error) {
       console.error('Error fetching services:', error)
-      // Set default services if API fails
-      setServices([
-        {
-          _id: '1',
-          title: 'Embedded Systems',
-          description: 'Custom embedded solutions for your projects',
-          icon: '🔧',
-          features: ['Microcontroller Programming', 'Hardware Integration', 'Real-time Systems'],
-        },
-        {
-          _id: '2',
-          title: 'IoT Solutions',
-          description: 'Connected devices and smart systems',
-          icon: '🌐',
-          features: ['Sensor Networks', 'Cloud Integration', 'Data Analytics'],
-        },
-      ])
+      setServices([])
+      setLoadError('Live service data could not be loaded. Check the API connection and try again.')
     } finally {
       setLoading(false)
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
+
     try {
       if (editingId) {
         await api.put(`/services/${editingId}`, formData)
-        toast.success('Service updated successfully!')
+        toast.success('Service updated successfully.')
       } else {
         await api.post('/services', formData)
-        toast.success('Service created successfully!')
+        toast.success('Service created successfully.')
       }
-      fetchServices()
-      setShowForm(false)
-      setEditingId(null)
-      setFormData({ title: '', description: '', icon: '', features: [] })
+
+      await fetchServices()
+      resetForm()
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to save service')
+      toast.error(error.response?.data?.message || 'Failed to save service.')
     }
   }
 
   const handleEdit = (service: Service) => {
-    setFormData(service)
-    setEditingId(service._id!)
+    setEditingId(service._id || null)
+    setFormData({
+      title: service.title,
+      description: service.description,
+      icon: service.icon,
+      features: service.features || [],
+    })
     setShowForm(true)
   }
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this service?')) {
-      try {
-        await api.delete(`/services/${id}`)
-        toast.success('Service deleted successfully!')
-        fetchServices()
-      } catch (error: any) {
-        toast.error(error.response?.data?.message || 'Failed to delete service')
-      }
+    if (!window.confirm('Delete this service?')) {
+      return
+    }
+
+    try {
+      await api.delete(`/services/${id}`)
+      toast.success('Service deleted successfully.')
+      await fetchServices()
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to delete service.')
     }
   }
 
   const addFeature = () => {
-    setFormData({
-      ...formData,
-      features: [...(formData.features || []), ''],
-    })
+    setFormData((prev) => ({
+      ...prev,
+      features: [...(prev.features || []), ''],
+    }))
   }
 
   const updateFeature = (index: number, value: string) => {
-    const features = [...(formData.features || [])]
-    features[index] = value
-    setFormData({ ...formData, features })
+    const nextFeatures = [...(formData.features || [])]
+    nextFeatures[index] = value
+    setFormData((prev) => ({
+      ...prev,
+      features: nextFeatures,
+    }))
   }
 
   const removeFeature = (index: number) => {
-    const features = formData.features?.filter((_, i) => i !== index) || []
-    setFormData({ ...formData, features })
+    setFormData((prev) => ({
+      ...prev,
+      features: (prev.features || []).filter((_, featureIndex) => featureIndex !== index),
+    }))
   }
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="flex h-64 items-center justify-center">
+        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary-600" />
       </div>
     )
   }
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Services Management</h2>
-          <p className="text-gray-600">Manage your service offerings and features.</p>
+          <p className="text-gray-600">Manage service copy, icons, and feature highlights.</p>
         </div>
-        <button
-          onClick={() => setShowForm(true)}
-          className="btn-primary flex items-center space-x-2"
-        >
+        <button onClick={() => setShowForm(true)} className="btn-primary flex items-center space-x-2">
           <Plus className="w-5 h-5" />
           <span>Add Service</span>
         </button>
       </div>
 
-      {/* Services List */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service) => (
-              <motion.div
-                key={service._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
-              >
-                <div className="text-4xl mb-4">{service.icon}</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
-                <p className="text-gray-600 mb-4">{service.description}</p>
-                
-                {service.features && service.features.length > 0 && (
-                  <div className="mb-4">
-                    <h4 className="font-semibold text-gray-900 mb-2">Features:</h4>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      {service.features.map((feature, index) => (
-                        <li key={index} className="flex items-center">
-                          <span className="w-1.5 h-1.5 bg-primary-500 rounded-full mr-2"></span>
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+      {loadError && (
+        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          {loadError}
+        </div>
+      )}
 
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => handleEdit(service)}
-                    className="flex items-center space-x-1 px-3 py-1 bg-primary-100 text-primary-700 rounded hover:bg-primary-200 transition-colors"
-                  >
-                    <Edit className="w-4 h-4" />
-                    <span>Edit</span>
-                  </button>
-                  <button
-                    onClick={() => handleDelete(service._id!)}
-                    className="flex items-center space-x-1 px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    <span>Delete</span>
-                  </button>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+      <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div className="p-6">
+          {services.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-10 text-center">
+              <Wrench className="mx-auto h-12 w-12 text-gray-400" />
+              <h3 className="mt-4 text-lg font-semibold text-gray-900">No Services Available</h3>
+              <p className="mt-2 text-sm text-gray-600">
+                Create your first service entry or restore API connectivity to manage live records.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {services.map((service) => (
+                <motion.div
+                  key={service._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="rounded-2xl border border-gray-200 p-6 shadow-sm transition-shadow hover:shadow-md"
+                >
+                  <div className="text-3xl">{service.icon}</div>
+                  <h3 className="mt-4 text-xl font-semibold text-gray-900">{service.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-gray-600">{service.description}</p>
+
+                  {service.features?.length ? (
+                    <div className="mt-4">
+                      <p className="text-sm font-semibold text-gray-900">Features</p>
+                      <ul className="mt-2 space-y-2 text-sm text-gray-600">
+                        {service.features.map((feature, index) => (
+                          <li key={`${service._id}-feature-${index}`} className="flex items-center">
+                            <span className="mr-2 h-1.5 w-1.5 rounded-full bg-primary-500" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+
+                  <div className="mt-6 flex gap-2">
+                    <button
+                      onClick={() => handleEdit(service)}
+                      className="inline-flex items-center rounded-lg bg-primary-100 px-3 py-2 text-sm font-medium text-primary-700 hover:bg-primary-200"
+                    >
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(service._id!)}
+                      className="inline-flex items-center rounded-lg bg-red-100 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-200"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Add/Edit Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+            className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl"
           >
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold text-gray-900">
-                {editingId ? 'Edit Service' : 'Add New Service'}
-              </h3>
-              <button
-                onClick={() => {
-                  setShowForm(false)
-                  setEditingId(null)
-                  setFormData({ title: '', description: '', icon: '', features: [] })
-                }}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="w-6 h-6" />
+            <div className="mb-6 flex items-center justify-between">
+              <h3 className="text-2xl font-bold text-gray-900">{editingId ? 'Edit Service' : 'Add Service'}</h3>
+              <button onClick={resetForm} className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+                <X className="h-5 w-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Service Title *
-                </label>
+                <label className="mb-2 block text-sm font-semibold text-gray-900">Service Title *</label>
                 <input
                   type="text"
                   value={formData.title || ''}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  onChange={(event) => setFormData((prev) => ({ ...prev, title: event.target.value }))}
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Description *
-                </label>
+                <label className="mb-2 block text-sm font-semibold text-gray-900">Description *</label>
                 <textarea
                   value={formData.description || ''}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={3}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  onChange={(event) => setFormData((prev) => ({ ...prev, description: event.target.value }))}
+                  rows={4}
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Icon (Emoji)
-                </label>
+                <label className="mb-2 block text-sm font-semibold text-gray-900">Icon</label>
                 <input
                   type="text"
                   value={formData.icon || ''}
-                  onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  placeholder="🔧"
+                  onChange={(event) => setFormData((prev) => ({ ...prev, icon: event.target.value }))}
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  placeholder="e.g. IoT, RF, AI, PCB"
                 />
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <label className="block text-sm font-semibold text-gray-900">
-                    Features
-                  </label>
+                <div className="mb-3 flex items-center justify-between">
+                  <label className="block text-sm font-semibold text-gray-900">Features</label>
                   <button
                     type="button"
                     onClick={addFeature}
-                    className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                    className="text-sm font-medium text-primary-700 hover:text-primary-800"
                   >
-                    + Add Feature
+                    Add Feature
                   </button>
                 </div>
-                {formData.features?.map((feature, index) => (
-                  <div key={index} className="flex items-center space-x-2 mb-2">
-                    <input
-                      type="text"
-                      value={feature}
-                      onChange={(e) => updateFeature(index, e.target.value)}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                      placeholder="Feature description"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeFeature(index)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
+
+                <div className="space-y-2">
+                  {(formData.features || []).map((feature, index) => (
+                    <div key={`feature-${index}`} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={feature}
+                        onChange={(event) => updateFeature(index, event.target.value)}
+                        className="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500"
+                        placeholder="Feature description"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeFeature(index)}
+                        className="rounded-lg p-2 text-red-600 hover:bg-red-50"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <div className="flex space-x-4">
-                <button
-                  type="submit"
-                  className="btn-primary flex items-center space-x-2"
-                >
-                  <Save className="w-5 h-5" />
-                  <span>{editingId ? 'Update' : 'Create'} Service</span>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <button type="submit" className="btn-primary inline-flex items-center justify-center">
+                  <Save className="mr-2 h-4 w-4" />
+                  {editingId ? 'Update Service' : 'Create Service'}
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    setShowForm(false)
-                    setEditingId(null)
-                    setFormData({ title: '', description: '', icon: '', features: [] })
-                  }}
-                  className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                  onClick={resetForm}
+                  className="rounded-lg border border-gray-300 px-4 py-3 font-medium text-gray-700 hover:bg-gray-50"
                 >
                   Cancel
                 </button>

@@ -16,6 +16,7 @@ export interface Project {
   technologies: string[]
   category: string
   status: 'completed' | 'in-progress' | 'planned'
+  featured?: boolean
   createdAt?: Date
   updatedAt?: Date
 }
@@ -97,18 +98,23 @@ export interface ProjectRequest {
   serviceType: string
   description: string
   status: 'pending' | 'in-review' | 'approved' | 'rejected'
+  notes?: string
   createdAt?: Date
   updatedAt?: Date
 }
 
+export type TestimonialStatus = 'pending' | 'approved' | 'rejected'
+
 export interface Testimonial {
   _id?: string
   name: string
+  email: string
   company?: string
   content: string
   rating: number
   avatar?: string
   featured: boolean
+  status: TestimonialStatus
   createdAt?: Date
   updatedAt?: Date
 }

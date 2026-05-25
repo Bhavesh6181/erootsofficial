@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react'
 import toast from 'react-hot-toast'
 import GoogleLoginButton from '../GoogleLoginButton'
+import { isGoogleLoginEnabled } from '../../utils/runtime'
 
 interface LoginFormData {
   email: string
@@ -28,12 +29,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsLoading }) => {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true)
     try {
-      console.log('Attempting login with:', data.email)
       await login(data.email, data.password)
-      console.log('Login successful')
       toast.success('Login successful!')
     } catch (error: any) {
-      console.error('Login error:', error)
       toast.error(error.message || 'Login failed')
     } finally {
       setIsLoading(false)
@@ -48,6 +46,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsLoading }) => {
       className="bg-white rounded-2xl shadow-xl p-8"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+          Admin access is provisioned separately. Public self-registration is disabled in production.
+        </div>
+
         <div>
           <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
             Email Address
@@ -113,23 +115,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ setIsLoading }) => {
         </motion.button>
       </form>
 
-      {/* Divider */}
-      <div className="relative my-6">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300" />
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">Or continue with</span>
-        </div>
-      </div>
+      {isGoogleLoginEnabled && (
+        <>
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">Or continue with</span>
+            </div>
+          </div>
 
-      {/* Google Login Button */}
-      <GoogleLoginButton 
-        className="w-full"
-        size="md"
-        text="Sign in with Google"
-      />
-
+          <GoogleLoginButton className="w-full" size="md" text="Sign in with Google" />
+        </>
+      )}
     </motion.div>
   )
 }

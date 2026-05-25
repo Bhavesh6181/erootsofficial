@@ -19,4 +19,27 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    target: 'es2015',
+    minify: 'esbuild', // esbuild is faster and more reliable
+    cssCodeSplit: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // React core
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          // Animation libraries
+          'animation-vendor': ['framer-motion', 'gsap', '@gsap/react'],
+          // UI libraries
+          'ui-vendor': ['lucide-react', '@headlessui/react', 'react-hot-toast'],
+          // Form libraries
+          'form-vendor': ['react-hook-form', 'axios'],
+        },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+      },
+    },
+    chunkSizeWarningLimit: 500,
+  },
 })

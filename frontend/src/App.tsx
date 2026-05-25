@@ -1,25 +1,28 @@
-import { Routes, Route, useLocation } from 'react-router-dom' // Force rebuild
+import { lazy, Suspense } from 'react'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Navbar from './components/Navbar'
 import Breadcrumb from './components/Breadcrumb'
 import BackToTop from './components/BackToTop'
 import Footer from './components/Footer'
 import ErootMitra from './components/ErootMitra'
-import AnimatedBackground from './components/AnimatedBackground'
-import Home from './pages/Home'
-import Services from './pages/Services'
-import Projects from './pages/Projects'
-import Contact from './pages/Contact'
-import Store from './pages/Store'
-import ProductDetail from './pages/ProductDetail'
-import Cart from './pages/Cart'
-import Checkout from './pages/Checkout'
-import OrderConfirmation from './pages/OrderConfirmation'
-import Admin from './pages/Admin'
-import AuthCallback from './pages/AuthCallback'
-import MyOrders from './pages/MyOrders'
+import LoadingFallback from './components/LoadingFallback'
 import { CartProvider } from './contexts/CartContext'
 import { AuthProvider } from './contexts/AuthContext'
+
+// Lazy load all pages for better performance
+const Home = lazy(() => import('./pages/Home'))
+const Services = lazy(() => import('./pages/Services'))
+const Projects = lazy(() => import('./pages/Projects'))
+const Contact = lazy(() => import('./pages/Contact'))
+const Store = lazy(() => import('./pages/Store'))
+const ProductDetail = lazy(() => import('./pages/ProductDetail'))
+const Cart = lazy(() => import('./pages/Cart'))
+const Checkout = lazy(() => import('./pages/Checkout'))
+const OrderConfirmation = lazy(() => import('./pages/OrderConfirmation'))
+const Admin = lazy(() => import('./pages/Admin'))
+const AuthCallback = lazy(() => import('./pages/AuthCallback'))
+const MyOrders = lazy(() => import('./pages/MyOrders'))
 
 function App() {
   const location = useLocation()
@@ -29,7 +32,6 @@ function App() {
     <AuthProvider>
       <CartProvider>
         <div className="min-h-screen relative">
-          <AnimatedBackground />
           {!isAdminPage && <Navbar />}
           {!isAdminPage && <Breadcrumb />}
           <motion.main
@@ -40,20 +42,22 @@ function App() {
             className="focus:outline-none"
             tabIndex={-1}
           >
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/projects" element={<Projects />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/store" element={<Store />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/order-confirmation" element={<OrderConfirmation />} />
-              <Route path="/my-orders" element={<MyOrders />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
-            </Routes>
+            <Suspense fallback={<LoadingFallback />}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/services" element={<Services />} />
+                <Route path="/projects" element={<Projects />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/store" element={<Store />} />
+                <Route path="/product/:id" element={<ProductDetail />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/order-confirmation" element={<OrderConfirmation />} />
+                <Route path="/my-orders" element={<MyOrders />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+              </Routes>
+            </Suspense>
           </motion.main>
           {!isAdminPage && <Footer />}
           {!isAdminPage && <ErootMitra />}

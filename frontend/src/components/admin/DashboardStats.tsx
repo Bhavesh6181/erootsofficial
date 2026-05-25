@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Users, Package, MessageSquare, TrendingUp } from 'lucide-react'
+import { BarChart3, MessageSquare, Package, ShoppingCart, TrendingUp, Wrench } from 'lucide-react'
 import { api } from '../../utils/api'
+import { Project, ProjectRequest, Testimonial } from '../../types'
+
+interface DashboardStatsProps {
+  onSelectTab?: (tabId: string) => void
+}
 
 interface Stats {
   totalServices: number
@@ -10,51 +15,60 @@ interface Stats {
   totalRequests: number
   pendingRequests: number
   totalTestimonials: number
+  totalOrders: number
+  featuredProjects: number
+  featuredTestimonials: number
 }
 
-const DashboardStats: React.FC = () => {
-  const [stats, setStats] = useState<Stats>({
-    totalServices: 0,
-    totalProducts: 0,
-    totalProjects: 0,
-    totalRequests: 0,
-    pendingRequests: 0,
-    totalTestimonials: 0,
-  })
+const emptyStats: Stats = {
+  totalServices: 0,
+  totalProducts: 0,
+  totalProjects: 0,
+  totalRequests: 0,
+  pendingRequests: 0,
+  totalTestimonials: 0,
+  totalOrders: 0,
+  featuredProjects: 0,
+  featuredTestimonials: 0,
+}
+
+const DashboardStats: React.FC<DashboardStatsProps> = ({ onSelectTab }) => {
+  const [stats, setStats] = useState<Stats>(emptyStats)
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [servicesRes, productsRes, projectsRes, requestsRes, testimonialsRes] = await Promise.all([
+        const [servicesRes, productsRes, projectsRes, requestsRes, testimonialsRes, ordersRes] = await Promise.all([
           api.get('/services'),
           api.get('/products'),
           api.get('/projects'),
           api.get('/requests'),
           api.get('/testimonials'),
+          api.get('/orders?limit=1'),
         ])
 
-        const pendingRequests = requestsRes.data.data.filter((req: any) => req.status === 'pending').length
+        const projects = projectsRes.data.data as Project[]
+        const requests = requestsRes.data.data as ProjectRequest[]
+        const testimonials = testimonialsRes.data.data as Testimonial[]
 
         setStats({
           totalServices: servicesRes.data.data.length,
           totalProducts: productsRes.data.data.length,
-          totalProjects: projectsRes.data.data.length,
-          totalRequests: requestsRes.data.data.length,
-          pendingRequests,
-          totalTestimonials: testimonialsRes.data.data.length,
+          totalProjects: projects.length,
+          totalRequests: requests.length,
+          pendingRequests: requests.filter((request) => request.status === 'pending').length,
+          totalTestimonials: testimonials.length,
+          totalOrders: ordersRes.data.pagination?.total ?? ordersRes.data.data.length,
+          featuredProjects: projects.filter((project) => project.featured).length,
+          featuredTestimonials: testimonials.filter((testimonial) => testimonial.featured).length,
         })
+        setLoadError(null)
       } catch (error) {
-        console.error('Error fetching stats:', error)
-        // Set default stats if API fails
-        setStats({
-          totalServices: 5,
-          totalProducts: 20,
-          totalProjects: 15,
-          totalRequests: 8,
-          pendingRequests: 3,
-          totalTestimonials: 12,
-        })
+        console.error('Error fetching dashboard stats:', error)
+        setStats(emptyStats)
+        setLoadError('Dashboard metrics could not be loaded. Check API connectivity and admin access.')
       } finally {
         setLoading(false)
       }
@@ -65,36 +79,59 @@ const DashboardStats: React.FC = () => {
 
   const statCards = [
     {
-      title: 'Services',
-      value: stats.totalServices,
-      icon: TrendingUp,
-      color: 'bg-blue-500',
+      title: 'Orders',
+      value: stats.totalOrders,
+      icon: ShoppingCart,
       bgColor: 'bg-blue-50',
-      textColor: 'text-blue-600',
+      textColor: 'text-blue-700',
     },
     {
       title: 'Products',
       value: stats.totalProducts,
       icon: Package,
-      color: 'bg-green-500',
       bgColor: 'bg-green-50',
-      textColor: 'text-green-600',
+      textColor: 'text-green-700',
     },
     {
-      title: 'Projects',
-      value: stats.totalProjects,
-      icon: MessageSquare,
-      color: 'bg-purple-500',
-      bgColor: 'bg-purple-50',
-      textColor: 'text-purple-600',
-    },
-    {
-      title: 'Total Requests',
-      value: stats.totalRequests,
-      icon: Users,
-      color: 'bg-orange-500',
+      title: 'Services',
+      value: stats.totalServices,
+      icon: Wrench,
       bgColor: 'bg-orange-50',
-      textColor: 'text-orange-600',
+      textColor: 'text-orange-700',
+    },
+    {
+      title: 'Requests',
+      value: stats.totalRequests,
+      icon: MessageSquare,
+      bgColor: 'bg-purple-50',
+      textColor: 'text-purple-700',
+    },
+  ]
+
+  const quickActions = [
+    {
+      label: 'Review Pending Requests',
+      description: `${stats.pendingRequests} leads waiting for action`,
+      tabId: 'requests',
+      accent: 'bg-amber-50 text-amber-900',
+    },
+    {
+      label: 'Manage Orders',
+      description: `${stats.totalOrders} orders recorded`,
+      tabId: 'orders',
+      accent: 'bg-blue-50 text-blue-900',
+    },
+    {
+      label: 'Update Store Catalog',
+      description: `${stats.totalProducts} active products`,
+      tabId: 'products',
+      accent: 'bg-green-50 text-green-900',
+    },
+    {
+      label: 'Refresh Portfolio',
+      description: `${stats.featuredProjects} featured project(s) live`,
+      tabId: 'projects',
+      accent: 'bg-purple-50 text-purple-900',
     },
   ]
 
@@ -110,11 +147,16 @@ const DashboardStats: React.FC = () => {
     <div>
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Dashboard Overview</h2>
-        <p className="text-gray-600">Welcome to your admin dashboard. Here's what's happening.</p>
+        <p className="text-gray-600">Live operational metrics from the current production data set.</p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {loadError && (
+        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          {loadError}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4 mb-8">
         {statCards.map((stat, index) => {
           const Icon = stat.icon
           return (
@@ -122,16 +164,16 @@ const DashboardStats: React.FC = () => {
               key={stat.title}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-sm p-6 border border-gray-200"
+              transition={{ delay: index * 0.08 }}
+              className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
-                  <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                  <p className="text-sm font-medium text-gray-500">{stat.title}</p>
+                  <p className="mt-2 text-3xl font-bold text-gray-900">{stat.value}</p>
                 </div>
-                <div className={`${stat.bgColor} p-3 rounded-lg`}>
-                  <Icon className={`w-6 h-6 ${stat.textColor}`} />
+                <div className={`rounded-xl p-3 ${stat.bgColor}`}>
+                  <Icon className={`h-6 w-6 ${stat.textColor}`} />
                 </div>
               </div>
             </motion.div>
@@ -139,59 +181,61 @@ const DashboardStats: React.FC = () => {
         })}
       </div>
 
-      {/* Additional Info */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white rounded-xl shadow-sm p-6 border border-gray-200"
+          transition={{ delay: 0.35 }}
+          className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
         >
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-          <div className="space-y-3">
-            <button className="w-full text-left p-3 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors">
-              <span className="text-primary-700 font-medium">View Pending Requests</span>
-              <p className="text-sm text-primary-600">{stats.pendingRequests} pending</p>
-            </button>
-            <button className="w-full text-left p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
-              <span className="text-green-700 font-medium">Add New Product</span>
-              <p className="text-sm text-green-600">Expand your store inventory</p>
-            </button>
-            <button className="w-full text-left p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
-              <span className="text-purple-700 font-medium">Update Services</span>
-              <p className="text-sm text-purple-600">Keep your offerings current</p>
-            </button>
+          <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
+          <div className="mt-4 grid gap-3">
+            {quickActions.map((action) => (
+              <button
+                key={action.label}
+                onClick={() => onSelectTab?.(action.tabId)}
+                className={`rounded-xl px-4 py-4 text-left transition hover:opacity-90 ${action.accent}`}
+              >
+                <p className="font-semibold">{action.label}</p>
+                <p className="mt-1 text-sm opacity-80">{action.description}</p>
+              </button>
+            ))}
           </div>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="bg-white rounded-xl shadow-sm p-6 border border-gray-200"
+          transition={{ delay: 0.45 }}
+          className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
         >
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-          <div className="space-y-3">
-            <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">New service added</p>
-                <p className="text-xs text-gray-600">2 hours ago</p>
-              </div>
+          <div className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-primary-600" />
+            <h3 className="text-lg font-semibold text-gray-900">Publishing Snapshot</h3>
+          </div>
+
+          <div className="mt-5 space-y-4">
+            <div className="rounded-xl bg-gray-50 p-4">
+              <p className="text-sm text-gray-500">Pending Requests</p>
+              <p className="mt-1 text-xl font-semibold text-gray-900">{stats.pendingRequests}</p>
             </div>
-            <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">Product inventory updated</p>
-                <p className="text-xs text-gray-600">4 hours ago</p>
-              </div>
+            <div className="rounded-xl bg-gray-50 p-4">
+              <p className="text-sm text-gray-500">Featured Projects</p>
+              <p className="mt-1 text-xl font-semibold text-gray-900">{stats.featuredProjects}</p>
             </div>
-            <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-              <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">New project request received</p>
-                <p className="text-xs text-gray-600">6 hours ago</p>
+            <div className="rounded-xl bg-gray-50 p-4">
+              <p className="text-sm text-gray-500">Featured Testimonials</p>
+              <p className="mt-1 text-xl font-semibold text-gray-900">{stats.featuredTestimonials}</p>
+            </div>
+            <div className="rounded-xl bg-primary-50 p-4 text-primary-900">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" />
+                <p className="text-sm font-semibold">Production note</p>
               </div>
+              <p className="mt-2 text-sm">
+                This dashboard no longer falls back to demo counts. If data is missing here, the admin team sees it
+                immediately instead of a fake healthy state.
+              </p>
             </div>
           </div>
         </motion.div>

@@ -31,7 +31,7 @@ const AdminDashboard: React.FC = () => {
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <DashboardStats />
+        return <DashboardStats onSelectTab={setActiveTab} />
       case 'orders':
         return <OrdersManagement />
       case 'products':
@@ -60,6 +60,9 @@ const AdminDashboard: React.FC = () => {
                 <span className="text-gradient">Eroots</span> Admin Dashboard
               </h1>
               <p className="text-sm sm:text-base text-gray-600 truncate">Welcome back, {user?.email}</p>
+              <p className="mt-1 text-xs sm:text-sm text-gray-500">
+                Production data only. Demo fallbacks are disabled for admin monitoring.
+              </p>
             </div>
             <button
               onClick={handleLogout}

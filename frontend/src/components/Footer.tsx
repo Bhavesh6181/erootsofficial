@@ -28,7 +28,6 @@ const Footer: React.FC = () => {
               top: Math.max(0, offsetPosition),
               behavior: 'smooth'
             })
-          } else {
           }
         }, 50)
       } else {
@@ -46,7 +45,6 @@ const Footer: React.FC = () => {
               top: Math.max(0, offsetPosition),
               behavior: 'smooth'
             })
-          } else {
           }
         }, 200)
       }

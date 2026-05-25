@@ -32,7 +32,6 @@ const MyOrders: React.FC = () => {
         setOrders(response.data.data)
       }
     } catch (error) {
-      console.error('Error fetching orders:', error)
       toast.error('Failed to fetch your orders')
     } finally {
       setLoading(false)
@@ -58,50 +57,38 @@ const MyOrders: React.FC = () => {
   const handleDownloadInvoice = async (order: Order) => {
     try {
       toast.loading('Preparing invoice...', { id: 'invoice-download' })
-      
-      console.log('Downloading invoice for order:', order._id, order.orderId)
-      console.log('API URL:', `${API_BASE_URL}/orders/${order._id}/invoice`)
-      
+
       const response = await fetch(`${API_BASE_URL}/orders/${order._id}/invoice`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('eroots-token')}`
         }
       })
-      
-      console.log('Response status:', response.status)
-      console.log('Response headers:', response.headers.get('content-type'))
-      
+
       if (!response.ok) {
-        const errorText = await response.text()
-        console.error('Error response:', errorText)
         throw new Error(`Failed to download invoice: ${response.status}`)
       }
-      
+
       const blob = await response.blob()
-      console.log('Blob size:', blob.size, 'bytes')
-      console.log('Blob type:', blob.type)
-      
+
       if (blob.size === 0) {
         throw new Error('Received empty PDF file')
       }
-      
+
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
       a.download = `invoice-${order.orderId}.pdf`
       document.body.appendChild(a)
       a.click()
-      
-      // Clean up after a short delay to ensure download starts
+
       setTimeout(() => {
         window.URL.revokeObjectURL(url)
         document.body.removeChild(a)
       }, 100)
-      
+
       toast.success('Invoice downloaded successfully!', { id: 'invoice-download' })
     } catch (error) {
-      console.error('Error downloading invoice:', error)
       toast.error(`Failed to download invoice: ${error instanceof Error ? error.message : 'Unknown error'}`, { id: 'invoice-download' })
     }
   }
@@ -222,7 +209,7 @@ const MyOrders: React.FC = () => {
                             {order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}
                           </span>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                           <div className="space-y-1">
                             <p className="text-gray-600">Order Date: <span className="font-medium text-gray-900">{formatDate(order.createdAt!)}</span></p>

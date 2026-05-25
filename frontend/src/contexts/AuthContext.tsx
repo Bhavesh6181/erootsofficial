@@ -39,17 +39,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     try {
-      console.log('AuthContext: Making login request to /auth/login')
       const response = await api.post('/auth/login', { email, password })
-      console.log('AuthContext: Login response received:', response.data)
-      
+
       const { token, user: userData } = response.data.data
-      
+
       localStorage.setItem('eroots-token', token)
       setUser(userData)
-      console.log('AuthContext: User set successfully:', userData)
     } catch (error: any) {
-      console.error('AuthContext: Login error:', error)
       throw new Error(error.response?.data?.message || 'Login failed')
     }
   }
@@ -68,10 +64,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       // Store token first
       localStorage.setItem('eroots-token', token)
-      
+
       // Wait a bit to ensure localStorage is updated
       await new Promise(resolve => setTimeout(resolve, 100))
-      
+
       // Get user profile with explicit token
       const response = await api.get('/auth/profile', {
         headers: {
@@ -80,7 +76,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       })
       setUser(response.data.data.user)
     } catch (error) {
-      console.error('Google callback error:', error)
       localStorage.removeItem('eroots-token')
       throw new Error('Authentication failed')
     }

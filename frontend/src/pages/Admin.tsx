@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import LoginForm from '../components/admin/LoginForm'
 import AdminDashboard from '../components/admin/AdminDashboard'
-import toast from 'react-hot-toast'
 
 const Admin: React.FC = () => {
   const { user, isLoading } = useAuth()
@@ -15,7 +14,6 @@ const Admin: React.FC = () => {
   // Redirect regular users to My Orders page
   useEffect(() => {
     if (user && user.role === 'user') {
-      console.log('Regular user detected, redirecting to My Orders')
       navigate('/my-orders')
     }
   }, [user, navigate])
@@ -49,7 +47,10 @@ const Admin: React.FC = () => {
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
                 <span className="text-gradient">Eroots</span> Admin
               </h2>
-              <p className="text-gray-600">Sign in to access the admin dashboard</p>
+              <p className="text-gray-600">Sign in to access the production admin dashboard.</p>
+              <p className="mt-2 text-sm text-gray-500">
+                Customer order tracking also uses this sign-in page, but only admin accounts can open the dashboard.
+              </p>
             </motion.div>
             
             <LoginForm setIsLoading={setIsLoginLoading} />

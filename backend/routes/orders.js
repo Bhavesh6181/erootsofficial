@@ -3,14 +3,74 @@ const { body, validationResult } = require('express-validator');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const User = require('../models/User');
-const { auth, adminAuth } = require('../middleware/auth');
+const { auth, adminAuth, optionalAuth } = require('../middleware/auth');
 const PDFDocument = require('pdfkit');
-const fs = require('fs');
-const path = require('path');
 const emailService = require('../services/emailService');
 const crypto = require('crypto');
+const { signToken, verifyToken } = require('../config/security');
 
 const router = express.Router();
+const enabledPaymentMethods = (process.env.ENABLED_PAYMENT_METHODS || 'COD')
+  .split(',')
+  .map((method) => method.trim().toUpperCase())
+  .filter(Boolean);
+const autoCreateCheckoutAccounts = process.env.ENABLE_CHECKOUT_ACCOUNT_CREATION === 'true';
+
+const releaseReservedStock = async (reservations) => {
+  if (!reservations.length) {
+    return;
+  }
+
+  await Promise.all(reservations.map((reservation) =>
+    Product.findByIdAndUpdate(reservation.productId, {
+      $inc: { stock: reservation.quantity }
+    })
+  ));
+};
+
+const generateOrderId = () => {
+  return `E_${Date.now()}_${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
+};
+
+const createInvoiceAccessToken = (order) => {
+  return signToken(
+    {
+      type: 'invoice-access',
+      orderId: order._id.toString(),
+    },
+    { expiresIn: '30m' }
+  );
+};
+
+const canAccessOrder = (user, order) => {
+  if (!user) {
+    return false;
+  }
+
+  if (user.role === 'admin') {
+    return true;
+  }
+
+  return order.userId && order.userId.toString() === user._id.toString();
+};
+
+const hasInvoiceAccess = (req, order) => {
+  if (canAccessOrder(req.user, order)) {
+    return true;
+  }
+
+  const accessToken = typeof req.query.access === 'string' ? req.query.access : null;
+  if (!accessToken) {
+    return false;
+  }
+
+  try {
+    const decoded = verifyToken(accessToken);
+    return decoded.type === 'invoice-access' && decoded.orderId === order._id.toString();
+  } catch (error) {
+    return false;
+  }
+};
 
 // Create new order (Checkout)
 router.post('/', [
@@ -24,9 +84,20 @@ router.post('/', [
   body('items').isArray({ min: 1 }).withMessage('At least one item is required'),
   body('items.*.product').isMongoId().withMessage('Valid product ID is required'),
   body('items.*.quantity').isInt({ min: 1 }).withMessage('Valid quantity is required'),
-  body('paymentMethod').isIn(['COD', 'UPI', 'CARD', 'NET_BANKING']).withMessage('Valid payment method is required'),
+  body('paymentMethod').custom((value) => {
+    if (!enabledPaymentMethods.includes(String(value).toUpperCase())) {
+      throw new Error(`Enabled payment methods: ${enabledPaymentMethods.join(', ')}`);
+    }
+
+    return true;
+  }),
   body('totalAmount').isFloat({ min: 0 }).withMessage('Valid total amount is required')
 ], async (req, res) => {
+  let reservedStock = [];
+  let userAccount = null;
+  let isNewUser = false;
+  let orderSaved = false;
+
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -44,20 +115,42 @@ router.post('/', [
     let calculatedTotal = 0;
 
     for (const item of items) {
-      const product = await Product.findById(item.product);
+      const product = await Product.findOneAndUpdate(
+        {
+          _id: item.product,
+          stock: { $gte: item.quantity }
+        },
+        {
+          $inc: { stock: -item.quantity }
+        },
+        {
+          new: false
+        }
+      );
+
       if (!product) {
+        const existingProduct = await Product.findById(item.product);
+
+        await releaseReservedStock(reservedStock);
+        reservedStock = [];
+
+        if (!existingProduct) {
+          return res.status(400).json({
+            success: false,
+            message: `Product with ID ${item.product} not found`
+          });
+        }
+
         return res.status(400).json({
           success: false,
-          message: `Product with ID ${item.product} not found`
+          message: `Insufficient stock for ${existingProduct.name}. Available: ${existingProduct.stock}, Requested: ${item.quantity}`
         });
       }
 
-      if (product.stock < item.quantity) {
-        return res.status(400).json({
-          success: false,
-          message: `Insufficient stock for ${product.name}. Available: ${product.stock}, Requested: ${item.quantity}`
-        });
-      }
+      reservedStock.push({
+        productId: product._id,
+        quantity: item.quantity
+      });
 
       const itemTotal = product.price * item.quantity;
       calculatedTotal += itemTotal;
@@ -73,6 +166,9 @@ router.post('/', [
 
     // Verify total amount
     if (Math.abs(calculatedTotal - totalAmount) > 0.01) {
+      await releaseReservedStock(reservedStock);
+      reservedStock = [];
+
       return res.status(400).json({
         success: false,
         message: 'Total amount mismatch'
@@ -80,12 +176,11 @@ router.post('/', [
     }
 
     // Find or create user account
-    let userAccount = await User.findOne({ email: user.email.toLowerCase() });
-    let isNewUser = false;
+    userAccount = await User.findOne({ email: user.email.toLowerCase() });
     let temporaryPassword = null;
 
-    if (!userAccount) {
-      // Create new user account for guest checkout
+    if (!userAccount && autoCreateCheckoutAccounts) {
+      // Optionally create a user account for guest checkout if explicitly enabled.
       temporaryPassword = crypto.randomBytes(8).toString('hex'); // Generate random password
       userAccount = new User({
         email: user.email.toLowerCase(),
@@ -101,13 +196,12 @@ router.post('/', [
     }
 
     // Generate unique order ID
-    const count = await Order.countDocuments();
-    const orderId = `E_${Date.now()}_${String(count + 1).padStart(4, '0')}`;
+    const orderId = generateOrderId();
 
     // Create order
     console.log('Creating order with data:', {
       orderId,
-      userId: userAccount._id,
+      userId: userAccount?._id,
       user,
       items: validatedItems,
       totalAmount: calculatedTotal,
@@ -117,7 +211,7 @@ router.post('/', [
     
     const order = new Order({
       orderId,
-      userId: userAccount._id,
+      userId: userAccount?._id,
       user,
       items: validatedItems,
       totalAmount: calculatedTotal,
@@ -128,15 +222,8 @@ router.post('/', [
 
     console.log('Order object created, attempting to save...');
     await order.save();
+    orderSaved = true;
     console.log('Order saved successfully:', order.orderId);
-
-    // Update product stock
-    for (const item of validatedItems) {
-      await Product.findByIdAndUpdate(
-        item.product,
-        { $inc: { stock: -item.quantity } }
-      );
-    }
 
     // Generate PDF invoice
     // const invoicePath = await generateInvoice(order);
@@ -144,13 +231,14 @@ router.post('/', [
     // Send email notifications
     const emailResults = await emailService.sendOrderEmails(order, isNewUser ? temporaryPassword : null);
     console.log('Email sending results:', emailResults);
+    const invoiceAccessToken = createInvoiceAccessToken(order);
 
     res.status(201).json({
       success: true,
       message: 'Order placed successfully',
       data: {
         order,
-        invoiceUrl: `/api/orders/${order._id}/invoice`,
+        invoiceUrl: `/orders/${order._id}/invoice?access=${invoiceAccessToken}`,
         emailNotifications: emailResults,
         accountCreated: isNewUser,
         accountDetails: isNewUser ? {
@@ -161,6 +249,14 @@ router.post('/', [
     });
 
   } catch (error) {
+    if (!orderSaved) {
+      await releaseReservedStock(reservedStock);
+    }
+
+    if (!orderSaved && isNewUser && userAccount?._id) {
+      await User.findByIdAndDelete(userAccount._id);
+    }
+
     console.error('Error creating order:', error);
     console.error('Error stack:', error.stack);
     res.status(500).json({
@@ -234,78 +330,76 @@ router.get('/my-orders', auth, async (req, res) => {
   }
 });
 
-// Test admin email notification endpoint (must come before /:id route)
-router.get('/test-admin-email', async (req, res) => {
-  try {
-    // Create a test order object
-    const testOrder = {
-      orderId: 'TEST_ORDER_123',
-      user: {
-        name: 'Test Customer',
-        email: 'test@example.com',
-        phone: '1234567890',
-        address: {
-          street: '123 Test Street',
-          city: 'Test City',
-          state: 'Test State',
-          pincode: '123456',
-          country: 'India'
-        }
-      },
-      items: [
-        {
-          name: 'Test Product',
-          quantity: 1,
-          price: 299
-        }
-      ],
-      totalAmount: 299,
-      paymentMethod: 'COD',
-      orderStatus: 'pending',
-      deliveryInstructions: 'Test delivery instructions',
-      createdAt: new Date(),
-      estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-    };
+if (process.env.ENABLE_TEST_ROUTES === 'true') {
+  // Test admin email notification endpoint (must come before /:id route)
+  router.get('/test-admin-email', adminAuth, async (req, res) => {
+    try {
+      const testOrder = {
+        orderId: 'TEST_ORDER_123',
+        user: {
+          name: 'Test Customer',
+          email: 'test@example.com',
+          phone: '1234567890',
+          address: {
+            street: '123 Test Street',
+            city: 'Test City',
+            state: 'Test State',
+            pincode: '123456',
+            country: 'India'
+          }
+        },
+        items: [
+          {
+            name: 'Test Product',
+            quantity: 1,
+            price: 299
+          }
+        ],
+        totalAmount: 299,
+        paymentMethod: 'COD',
+        orderStatus: 'pending',
+        deliveryInstructions: 'Test delivery instructions',
+        createdAt: new Date(),
+        estimatedDelivery: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+      };
 
-    console.log('Sending test admin email to:', process.env.ADMIN_EMAIL || 'eroots2025@gmail.com');
-    const result = await emailService.sendAdminOrderNotification(testOrder);
-    
-    res.json({
-      success: true,
-      message: 'Test admin email sent',
-      result,
-      adminEmail: 'eroots2025@gmail.com'
-    });
-  } catch (error) {
-    console.error('Test admin email failed:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Test admin email failed',
-      error: error.message
-    });
-  }
-});
+      const result = await emailService.sendAdminOrderNotification(testOrder);
+      
+      res.json({
+        success: true,
+        message: 'Test admin email sent',
+        result,
+      });
+    } catch (error) {
+      console.error('Test admin email failed:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Test admin email failed',
+        error: error.message
+      });
+    }
+  });
 
-// Test email configuration endpoint (must come before /:id route)
-router.get('/test-email', async (req, res) => {
-  try {
-    const result = await emailService.testEmailConfig();
-    res.json({
-      success: true,
-      message: 'Email configuration test completed',
-      result
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Email configuration test failed',
-      error: error.message
-    });
-  }
-});
+  router.get('/test-email', adminAuth, async (req, res) => {
+    try {
+      const result = await emailService.testEmailConfig();
+      res.json({
+        success: true,
+        message: 'Email configuration test completed',
+        result
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Email configuration test failed',
+        error: error.message
+      });
+    }
+  });
+}
 
 // Get order by ID (with validation to ensure it's a valid ObjectId)
-router.get('/:id', async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
   try {
     // Check if the ID is a valid MongoDB ObjectId
     if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -322,6 +416,13 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({
         success: false,
         message: 'Order not found'
+      });
+    }
+
+    if (!canAccessOrder(req.user, order)) {
+      return res.status(403).json({
+        success: false,
+        message: 'You do not have access to this order'
       });
     }
 
@@ -418,7 +519,7 @@ router.put('/:id/status', [
 });
 
 // Download invoice
-router.get('/:id/invoice', async (req, res) => {
+router.get('/:id/invoice', optionalAuth, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
       .populate('items.product', 'name price image');
@@ -427,6 +528,13 @@ router.get('/:id/invoice', async (req, res) => {
       return res.status(404).json({
         success: false,
         message: 'Order not found'
+      });
+    }
+
+    if (!hasInvoiceAccess(req, order)) {
+      return res.status(403).json({
+        success: false,
+        message: 'You do not have access to this invoice'
       });
     }
 

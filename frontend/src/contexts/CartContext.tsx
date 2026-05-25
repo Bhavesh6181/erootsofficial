@@ -11,47 +11,42 @@ type CartAction =
 const initialState: CartItem[] = []
 
 const cartReducer = (state: CartItem[], action: CartAction): CartItem[] => {
-  console.log('CartReducer: Processing action:', action.type, 'Current state:', state.length, 'items')
-  
   switch (action.type) {
     case 'ADD_TO_CART': {
-      console.log('CartReducer: ADD_TO_CART action, payload:', action.payload)
       const existingItem = state.find(item => item.product._id === action.payload.product._id)
-      
+
       if (existingItem) {
-        console.log('CartReducer: Product already exists, updating quantity')
         return state.map(item =>
           item.product._id === action.payload.product._id
             ? { ...item, quantity: item.quantity + action.payload.quantity }
             : item
         )
       }
-      
-      console.log('CartReducer: Adding new product to cart')
+
       return [...state, { product: action.payload.product, quantity: action.payload.quantity }]
     }
-    
+
     case 'REMOVE_FROM_CART':
       return state.filter(item => item.product._id !== action.payload)
-    
+
     case 'UPDATE_QUANTITY': {
       if (action.payload.quantity <= 0) {
         return state.filter(item => item.product._id !== action.payload.productId)
       }
-      
+
       return state.map(item =>
         item.product._id === action.payload.productId
           ? { ...item, quantity: action.payload.quantity }
           : item
       )
     }
-    
+
     case 'CLEAR_CART':
       return []
-    
+
     case 'LOAD_CART':
       return action.payload
-    
+
     default:
       return state
   }
@@ -78,7 +73,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const parsedCart = JSON.parse(savedCart)
         dispatch({ type: 'LOAD_CART', payload: parsedCart })
       } catch (error) {
-        console.error('Failed to load cart from localStorage:', error)
+        // Silently handle localStorage parse errors
       }
     }
   }, [])
@@ -93,7 +88,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (product.stock < quantity) {
       throw new Error(`Insufficient stock. Only ${product.stock} items available.`)
     }
-    
+
     dispatch({ type: 'ADD_TO_CART', payload: { product, quantity } })
   }
 

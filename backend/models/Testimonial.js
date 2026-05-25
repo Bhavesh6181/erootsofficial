@@ -7,6 +7,13 @@ const testimonialSchema = new mongoose.Schema({
     trim: true,
     maxlength: 100,
   },
+  email: {
+    type: String,
+    required: true,
+    lowercase: true,
+    trim: true,
+    maxlength: 150,
+  },
   company: {
     type: String,
     trim: true,
@@ -32,11 +39,17 @@ const testimonialSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  status: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending',
+  },
 }, {
   timestamps: true,
 });
 
 // Index for better search performance
-testimonialSchema.index({ featured: 1, createdAt: -1 });
+testimonialSchema.index({ status: 1, featured: 1, createdAt: -1 });
+testimonialSchema.index({ email: 1, createdAt: -1 });
 
 module.exports = mongoose.model('Testimonial', testimonialSchema);

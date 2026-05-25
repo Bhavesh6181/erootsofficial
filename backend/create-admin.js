@@ -12,7 +12,7 @@
  *   npm run create-admin
  */
 
-require('dotenv').config();
+require('./config/loadEnv');
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const readline = require('readline');
@@ -40,7 +40,7 @@ async function createAdminUser() {
       console.log('⚠️  Admin user already exists:');
       console.log(`   Email: ${existingAdmin.email}`);
       console.log(`   Role: ${existingAdmin.role}`);
-      console.log('\nTo create another admin user, use the registration endpoint or modify the existing user.\n');
+      console.log('\nTo create another admin user, update an existing user record manually or use a protected maintenance workflow.\n');
       process.exit(0);
     }
 

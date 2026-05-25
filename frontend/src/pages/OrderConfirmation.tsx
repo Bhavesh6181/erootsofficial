@@ -2,10 +2,19 @@ import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { CheckCircle, Download, ShoppingBag, MapPin, Phone, Mail, Calendar } from 'lucide-react'
-import { Order } from '../types'
+import { Calendar, CheckCircle, Download, Mail, MapPin, ShieldCheck, ShoppingBag } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { Order } from '../types'
 import { API_BASE_URL } from '../utils/api'
+
+const buildInvoiceUrl = (invoiceUrl: string) => {
+  if (invoiceUrl.startsWith('http://') || invoiceUrl.startsWith('https://')) {
+    return invoiceUrl
+  }
+
+  const normalizedPath = invoiceUrl.startsWith('/') ? invoiceUrl : `/${invoiceUrl}`
+  return `${API_BASE_URL}${normalizedPath}`
+}
 
 const OrderConfirmation: React.FC = () => {
   const location = useLocation()
@@ -13,60 +22,65 @@ const OrderConfirmation: React.FC = () => {
   const [order, setOrder] = useState<Order | null>(null)
   const [invoiceUrl, setInvoiceUrl] = useState<string | null>(null)
   const [accountCreated, setAccountCreated] = useState(false)
-  const [accountDetails, setAccountDetails] = useState<any>(null)
+  const [accountDetails, setAccountDetails] = useState<{ email?: string; message?: string } | null>(null)
 
   useEffect(() => {
-    if (location.state?.order) {
-      setOrder(location.state.order)
-      setInvoiceUrl(location.state.invoiceUrl)
-      setAccountCreated(location.state.accountCreated || false)
-      setAccountDetails(location.state.accountDetails || null)
-    } else {
-      // If no order data, redirect to store
+    if (!location.state?.order) {
       navigate('/store')
+      return
     }
+
+    setOrder(location.state.order)
+    setInvoiceUrl(location.state.invoiceUrl || null)
+    setAccountCreated(Boolean(location.state.accountCreated))
+    setAccountDetails(location.state.accountDetails || null)
   }, [location.state, navigate])
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-IN', {
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(price)
-  }
 
-  const formatDate = (date: Date | string) => {
-    return new Date(date).toLocaleDateString('en-IN', {
+  const formatDate = (date: Date | string) =>
+    new Date(date).toLocaleDateString('en-IN', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     })
-  }
 
   const handleDownloadInvoice = async () => {
-    if (!order || !invoiceUrl) return
+    if (!order || !invoiceUrl) {
+      return
+    }
 
     try {
       toast.loading('Preparing invoice...', { id: 'invoice-download' })
-      const response = await fetch(`${API_BASE_URL}${invoiceUrl}`)
-      
+
+      const token = localStorage.getItem('eroots-token')
+      const response = await fetch(buildInvoiceUrl(invoiceUrl), {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      })
+
       if (!response.ok) {
-        throw new Error('Failed to download invoice')
+        throw new Error(`Invoice request failed with status ${response.status}`)
       }
-      
+
       const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `invoice-${order.orderId}.pdf`
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
-      toast.success('Invoice downloaded successfully!', { id: 'invoice-download' })
+      const downloadUrl = window.URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = downloadUrl
+      anchor.download = `invoice-${order.orderId}.pdf`
+      document.body.appendChild(anchor)
+      anchor.click()
+      window.URL.revokeObjectURL(downloadUrl)
+      document.body.removeChild(anchor)
+
+      toast.success('Invoice downloaded successfully.', { id: 'invoice-download' })
     } catch (error) {
       console.error('Error downloading invoice:', error)
-      toast.error('Failed to download invoice', { id: 'invoice-download' })
+      toast.error('Failed to download invoice. Please try again.', { id: 'invoice-download' })
     }
   }
 
@@ -74,7 +88,7 @@ const OrderConfirmation: React.FC = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-primary-600" />
           <p className="mt-4 text-gray-600">Loading order details...</p>
         </div>
       </div>
@@ -85,254 +99,209 @@ const OrderConfirmation: React.FC = () => {
     <>
       <Helmet>
         <title>Order Confirmation - Eroots Technology</title>
-        <meta name="description" content="Your order has been placed successfully" />
+        <meta name="description" content="Your order has been placed successfully." />
       </Helmet>
 
-      <div className="min-h-screen bg-gray-50 pt-24 pb-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Success Header */}
+      <div className="min-h-screen bg-gray-50 pt-24 pb-10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-8"
+            className="rounded-3xl border border-green-200 bg-white p-8 shadow-sm"
           >
-            <CheckCircle className="mx-auto h-16 w-16 text-green-500 mb-4" />
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Order Confirmed!</h1>
-            <p className="text-lg text-gray-600">
-              Thank you for your order. We'll send you a confirmation email shortly.
-            </p>
+            <div className="text-center">
+              <CheckCircle className="mx-auto h-16 w-16 text-green-500" />
+              <h1 className="mt-4 text-3xl font-bold text-gray-900">Order Confirmed</h1>
+              <p className="mt-2 text-lg text-gray-600">
+                Your order has been placed successfully. We will email the confirmation and invoice access details
+                shortly.
+              </p>
+            </div>
+
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              <div className="rounded-2xl bg-gray-50 p-4 text-center">
+                <p className="text-sm text-gray-500">Order ID</p>
+                <p className="mt-1 font-semibold text-gray-900">{order.orderId}</p>
+              </div>
+              <div className="rounded-2xl bg-gray-50 p-4 text-center">
+                <p className="text-sm text-gray-500">Payment Method</p>
+                <p className="mt-1 font-semibold text-gray-900">{order.paymentMethod}</p>
+              </div>
+              <div className="rounded-2xl bg-gray-50 p-4 text-center">
+                <p className="text-sm text-gray-500">Total Amount</p>
+                <p className="mt-1 font-semibold text-primary-600">{formatPrice(order.totalAmount)}</p>
+              </div>
+            </div>
           </motion.div>
 
-          {/* Account Creation Alert */}
-          {accountCreated && accountDetails && (
+          {accountCreated && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-gradient-to-r from-primary-50 to-primary-100 border-2 border-primary-300 rounded-lg p-6 mb-8"
+              className="mt-6 rounded-3xl border border-primary-200 bg-primary-50 p-6 shadow-sm"
             >
-              <div className="flex items-start">
-                <div className="flex-shrink-0">
-                  <CheckCircle className="h-8 w-8 text-primary-600" />
-                </div>
-                <div className="ml-4 flex-1">
-                  <h3 className="text-lg font-semibold text-primary-900 mb-2">
-                    🎉 Account Created Successfully!
-                  </h3>
-                  <p className="text-primary-800 mb-3">
-                    We've created an account for you with email: <strong>{accountDetails.email}</strong>
+              <div className="flex items-start gap-4">
+                <ShieldCheck className="mt-1 h-6 w-6 text-primary-700" />
+                <div className="flex-1">
+                  <h2 className="text-lg font-semibold text-primary-900">Order Tracking Account Created</h2>
+                  <p className="mt-2 text-sm text-primary-800">
+                    {accountDetails?.message ||
+                      'A customer account has been created for this order so you can sign in and track future updates.'}
                   </p>
-                  <p className="text-sm text-primary-700 mb-3">
-                    Check your email for your login credentials. You can now track your orders and manage your profile!
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-3 mt-4">
+                  {accountDetails?.email && (
+                    <p className="mt-2 text-sm text-primary-700">
+                      Account email: <span className="font-semibold">{accountDetails.email}</span>
+                    </p>
+                  )}
+                  <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
                     <button
-                      onClick={() => navigate('/my-orders')}
-                      className="inline-flex items-center justify-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
+                      onClick={() => navigate('/admin')}
+                      className="inline-flex items-center justify-center rounded-xl bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700"
                     >
-                      View My Orders
+                      Sign In to Track Orders
                     </button>
-                    <div className="text-sm text-primary-700 flex items-center">
-                      <span>💡 Use the credentials sent to your email to log in</span>
-                    </div>
+                    <p className="text-sm text-primary-700">
+                      Use the first-time access details sent to your email after checkout.
+                    </p>
                   </div>
                 </div>
               </div>
             </motion.div>
           )}
 
-          {/* Order Details Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white rounded-lg shadow-sm border mb-8"
-          >
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">Order Details</h2>
-            </div>
-            <div className="px-6 py-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="font-medium text-gray-900 mb-3">Order Information</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Order ID:</span>
-                      <span className="font-medium">{order.orderId}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Order Date:</span>
-                      <span className="font-medium">{formatDate(order.createdAt!)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Payment Method:</span>
-                      <span className="font-medium">{order.paymentMethod}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Order Status:</span>
-                      <span className="font-medium capitalize text-primary-600">{order.orderStatus}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Estimated Delivery:</span>
-                      <span className="font-medium">{formatDate(order.estimatedDelivery!)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-medium text-gray-900 mb-3">Customer Information</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center">
-                      <span className="text-gray-600 w-16">Name:</span>
-                      <span className="font-medium">{order.user.name}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-gray-600 w-16">Email:</span>
-                      <span className="font-medium">{order.user.email}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-gray-600 w-16">Phone:</span>
-                      <span className="font-medium">{order.user.phone}</span>
-                    </div>
-                    <div className="flex items-start">
-                      <span className="text-gray-600 w-16">Address:</span>
-                      <span className="font-medium">
-                        {order.user.address.street},<br />
-                        {order.user.address.city}, {order.user.address.state}<br />
-                        {order.user.address.pincode}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+          <div className="mt-6 grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
+            <motion.section
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="rounded-3xl border border-gray-200 bg-white shadow-sm"
+            >
+              <div className="border-b border-gray-200 px-6 py-4">
+                <h2 className="text-xl font-semibold text-gray-900">Order Items</h2>
               </div>
-            </div>
-          </motion.div>
 
-          {/* Order Items */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="bg-white rounded-lg shadow-sm border mb-8"
-          >
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center">
-                <ShoppingBag className="w-5 h-5 mr-2" />
-                Order Items ({order.items.length})
-              </h2>
-            </div>
-            <div className="divide-y divide-gray-200">
-              {order.items.map((item, index) => (
-                <div key={index} className="px-6 py-4">
-                  <div className="flex items-center space-x-4">
+              <div className="divide-y divide-gray-100">
+                {order.items.map((item, index) => (
+                  <div key={`${item.name}-${index}`} className="flex items-center gap-4 px-6 py-4">
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-16 h-16 object-cover rounded border"
-                      onError={(e) => {
-                        e.currentTarget.src = '/images/placeholder-product.jpg'
+                      className="h-16 w-16 rounded-xl border border-gray-200 object-cover"
+                      onError={(event) => {
+                        event.currentTarget.src = '/images/placeholder-product.jpg'
                       }}
                     />
-                    <div className="flex-1">
-                      <h3 className="font-medium text-gray-900">{item.name}</h3>
-                      <p className="text-sm text-gray-600">
-                        Quantity: {item.quantity} × {formatPrice(item.price)}
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-gray-900">{item.name}</p>
+                      <p className="mt-1 text-sm text-gray-600">
+                        Quantity: {item.quantity} x {formatPrice(item.price)}
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="font-medium text-gray-900">
-                        {formatPrice(item.price * item.quantity)}
-                      </p>
-                    </div>
+                    <p className="text-sm font-semibold text-gray-900">{formatPrice(item.price * item.quantity)}</p>
                   </div>
-                </div>
-              ))}
-            </div>
-            <div className="px-6 py-4 border-t border-gray-200">
-              <div className="flex justify-between items-center">
-                <span className="text-lg font-semibold text-gray-900">Total Amount:</span>
-                <span className="text-xl font-bold text-primary-600">
-                  {formatPrice(order.totalAmount)}
-                </span>
+                ))}
               </div>
-            </div>
-          </motion.div>
 
-          {/* Payment Information */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="bg-white rounded-lg shadow-sm border mb-8"
-          >
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">Payment Information</h2>
-            </div>
-            <div className="px-6 py-6">
-              {order.paymentMethod === 'COD' ? (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <div className="flex items-center">
-                    <CheckCircle className="w-6 h-6 text-green-600 mr-3" />
+              <div className="border-t border-gray-200 px-6 py-4">
+                <div className="flex items-center justify-between text-lg font-semibold text-gray-900">
+                  <span>Total</span>
+                  <span className="text-primary-600">{formatPrice(order.totalAmount)}</span>
+                </div>
+              </div>
+            </motion.section>
+
+            <div className="space-y-6">
+              <motion.section
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="rounded-3xl border border-gray-200 bg-white shadow-sm"
+              >
+                <div className="border-b border-gray-200 px-6 py-4">
+                  <h2 className="text-xl font-semibold text-gray-900">Order Details</h2>
+                </div>
+
+                <div className="space-y-4 px-6 py-5 text-sm">
+                  <div className="flex items-start gap-3">
+                    <Calendar className="mt-0.5 h-4 w-4 text-gray-400" />
                     <div>
-                      <h3 className="font-medium text-green-900">Cash on Delivery (COD)</h3>
-                      <p className="text-sm text-green-700 mt-1">
-                        You will pay <strong>{formatPrice(order.totalAmount)}</strong> when your order is delivered.
-                        Please keep the exact amount ready for the delivery person.
+                      <p className="text-gray-500">Order Date</p>
+                      <p className="font-medium text-gray-900">{formatDate(order.createdAt!)}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Mail className="mt-0.5 h-4 w-4 text-gray-400" />
+                    <div>
+                      <p className="text-gray-500">Customer Email</p>
+                      <p className="font-medium text-gray-900">{order.user.email}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <MapPin className="mt-0.5 h-4 w-4 text-gray-400" />
+                    <div>
+                      <p className="text-gray-500">Shipping Address</p>
+                      <p className="font-medium text-gray-900">
+                        {order.user.address.street}
+                        <br />
+                        {order.user.address.city}, {order.user.address.state}
+                        <br />
+                        {order.user.address.pincode}
+                        {order.user.address.country ? `, ${order.user.address.country}` : ''}
                       </p>
                     </div>
                   </div>
+                  {order.estimatedDelivery && (
+                    <div className="rounded-2xl bg-green-50 p-4 text-green-900">
+                      <p className="text-sm font-semibold">Estimated Delivery</p>
+                      <p className="mt-1 text-sm">{formatDate(order.estimatedDelivery)}</p>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h3 className="font-medium text-blue-900">Payment Status</h3>
-                  <p className="text-sm text-blue-700 mt-1">
-                    Payment will be processed when your order is confirmed.
+              </motion.section>
+
+              <motion.section
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="rounded-3xl border border-blue-200 bg-blue-50 p-5 shadow-sm"
+              >
+                <h2 className="text-lg font-semibold text-blue-900">What Happens Next</h2>
+                <div className="mt-3 space-y-2 text-sm text-blue-900">
+                  <p>We will review and begin processing this order within 24 hours.</p>
+                  <p>You will receive shipping updates as the order status changes.</p>
+                  <p>Invoice access is protected and can be downloaded from the button below.</p>
+                  <p>
+                    For questions, reply to the confirmation email or contact{' '}
+                    <span className="font-semibold">eroots2025@gmail.com</span>.
                   </p>
                 </div>
-              )}
+              </motion.section>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Action Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            transition={{ delay: 0.5 }}
+            className="mt-8 flex flex-col gap-4 sm:flex-row sm:justify-center"
           >
             {invoiceUrl && (
               <button
                 onClick={handleDownloadInvoice}
-                className="btn-secondary inline-flex items-center justify-center"
+                className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-5 py-3 font-semibold text-gray-900 hover:bg-gray-50"
               >
-                <Download className="w-5 h-5 mr-2" />
+                <Download className="mr-2 h-5 w-5" />
                 Download Invoice
               </button>
             )}
             <button
               onClick={() => navigate('/store')}
-              className="btn-primary inline-flex items-center justify-center"
+              className="inline-flex items-center justify-center rounded-xl bg-primary-600 px-5 py-3 font-semibold text-white hover:bg-primary-700"
             >
-              <ShoppingBag className="w-5 h-5 mr-2" />
+              <ShoppingBag className="mr-2 h-5 w-5" />
               Continue Shopping
             </button>
-          </motion.div>
-
-          {/* Delivery Information */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.0 }}
-            className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6"
-          >
-            <h3 className="font-medium text-blue-900 mb-3">What's Next?</h3>
-            <div className="space-y-2 text-sm text-blue-800">
-              <p>• You will receive an order confirmation email shortly</p>
-              <p>• We'll start processing your order within 24 hours</p>
-              <p>• You'll receive tracking information once your order ships</p>
-              <p>• Estimated delivery: {formatDate(order.estimatedDelivery!)}</p>
-              <p>• For any questions, contact us at support@eroots.com</p>
-            </div>
           </motion.div>
         </div>
       </div>

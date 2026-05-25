@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('./config/loadEnv');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -6,8 +6,11 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const session = require('express-session');
 const { passport } = require('./config/passport');
+const { getJwtSecret, getSessionSecret } = require('./config/security');
 
 const app = express();
+
+getJwtSecret();
 
 // Trust proxy - required when behind reverse proxy (Render, Heroku, etc.)
 app.set('trust proxy', 1);
@@ -74,11 +77,13 @@ app.use(express.urlencoded({ extended: true }));
 
 // Session configuration for OAuth
 app.use(session({
-  secret: process.env.JWT_SECRET || 'fallback_secret',
+  secret: getSessionSecret(),
   resave: false,
   saveUninitialized: false,
   cookie: {
     secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
 }));

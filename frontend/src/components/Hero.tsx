@@ -24,15 +24,15 @@ const Hero: React.FC = () => {
   }
 
   return (
-    <section 
+    <section
       className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary-50 via-white to-primary-50 pt-16 sm:pt-20"
       aria-labelledby="hero-heading"
     >
       {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-20 -right-20 sm:-top-40 sm:-right-40 w-40 h-40 sm:w-80 sm:h-80 bg-primary-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float"></div>
-        <div className="absolute -bottom-20 -left-20 sm:-bottom-40 sm:-left-40 w-40 h-40 sm:w-80 sm:h-80 bg-secondary-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-20 left-1/2 sm:top-40 w-40 h-40 sm:w-80 sm:h-80 bg-primary-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style={{ animationDelay: '4s' }}></div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-20 -right-20 sm:-top-40 sm:-right-40 w-60 h-60 sm:w-96 sm:h-96 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float"></div>
+        <div className="absolute -bottom-20 -left-20 sm:-bottom-40 sm:-left-40 w-60 h-60 sm:w-96 sm:h-96 bg-gradient-to-br from-secondary-400 to-pink-600 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-20 left-1/2 sm:top-40 w-60 h-60 sm:w-96 sm:h-96 bg-gradient-to-br from-primary-300 to-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-float" style={{ animationDelay: '4s' }}></div>
       </div>
 
       <div className="container-custom relative z-10 px-4 sm:px-6 lg:px-8">
@@ -65,8 +65,8 @@ const Hero: React.FC = () => {
           >
             <div className="w-16 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 mx-auto mb-6 rounded-full"></div>
             <p className="text-lg sm:text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed px-4 font-light">
-              High-quality components and end-to-end project solutions designed for 
-              <span className="text-primary-600 font-medium"> innovation</span> and 
+              High-quality components and end-to-end project solutions designed for
+              <span className="text-primary-600 font-medium"> innovation</span> and
               <span className="text-primary-600 font-medium"> reliability</span>.
             </p>
           </motion.div>
@@ -98,26 +98,26 @@ const Hero: React.FC = () => {
             variants={itemVariants}
             className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-2xl mx-auto px-4"
           >
-            <div className="text-center">
-              <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-primary-100 rounded-full mx-auto mb-3 sm:mb-4">
-                <Users className="w-6 h-6 sm:w-8 sm:h-8 text-primary-600" />
+            <div className="glass-card text-center p-6">
+              <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full mx-auto mb-3 sm:mb-4 shadow-lg shadow-primary-500/30">
+                <Users className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
               <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">900+</div>
-              <div className="text-sm sm:text-base text-gray-600">Happy Clients</div>
+              <div className="text-sm sm:text-base text-gray-600 font-medium">Happy Clients</div>
             </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-primary-100 rounded-full mx-auto mb-3 sm:mb-4">
-                <Target className="w-6 h-6 sm:w-8 sm:h-8 text-primary-600" />
+            <div className="glass-card text-center p-6">
+              <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full mx-auto mb-3 sm:mb-4 shadow-lg shadow-primary-500/30">
+                <Target className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
               <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">500+</div>
-              <div className="text-sm sm:text-base text-gray-600">Projects Completed</div>
+              <div className="text-sm sm:text-base text-gray-600 font-medium">Projects Completed</div>
             </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-primary-100 rounded-full mx-auto mb-3 sm:mb-4">
-                <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-primary-600" />
+            <div className="glass-card text-center p-6">
+              <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full mx-auto mb-3 sm:mb-4 shadow-lg shadow-primary-500/30">
+                <Zap className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
               </div>
               <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">5+</div>
-              <div className="text-sm sm:text-base text-gray-600">Component Deliveries</div>
+              <div className="text-sm sm:text-base text-gray-600 font-medium">Component Deliveries</div>
             </div>
           </motion.div>
         </motion.div>
